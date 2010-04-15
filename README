@@ -16,5 +16,5 @@ ldscripts folder into a place where the linker will find it. If you don't do
 this you may run into problems discussed in Gentoo bug #147155, especially if
 you're using flags specifying specific instruction sets. Running the command
 `sudo ln -s /usr/$CHOST/msp430/lib/ldscripts /usr/msp430/lib/ldscripts' where
-CHOST is something like x86_64-pc-linux-gnu or i686-pc-linux-gnu for standard
+$CHOST is something like x86_64-pc-linux-gnu or i686-pc-linux-gnu for standard
 amd64 or x86 architectures running Gentoo.
