@@ -1,0 +1,84 @@
+--- msp430-libc-20100403/src/Makefile.orig	2010-04-13 20:48:46.863329580 -0700
++++ msp430-libc-20100403/src/Makefile	2010-04-13 21:09:57.148086989 -0700
+@@ -25,7 +25,7 @@
+ override AR = msp430-ar
+ RM = rm
+ MD = mkdir -p $@
+-INSTALL = install -c -m644 $^/
++INSTALL = install -c -m644 $^
+ 
+ COMMON := $(LIB_OPTIONS)
+ # make sure we can find our header files (not the installed ones)
+@@ -87,8 +87,9 @@
+ clean-crt:
+ 	${RM} -f $(CRT_OBJS)
+ 
+-install-crt: $(CRT_OBJS) ${libdir}
+-	${INSTALL}
++install-crt:
++	mkdir -p ${libdir} 
++	${INSTALL} $(CRT_OBJS) ${libdir}
+ 
+ makedir-crt:
+ 	mkdir -p $(BUILDDIR)
+@@ -120,21 +121,25 @@
+ 
+ install-headers: ins-hr ins-hs ins-msp430
+ 
+-ins-hr: $(wildcard $(SRC_ROOT)/../include/*.h) ${includedir}
+-	${INSTALL}
+-
+-ins-hs: $(wildcard $(SRC_ROOT)/../include/sys/*.h) ${includedir}/sys
+-	${INSTALL}
+-
+-ins-msp430: $(wildcard $(SRC_ROOT)/../include/msp430/*.h) ${includedir}/msp430
+-	${INSTALL}
+-
+-fix-limits: $(wildcard $(SRC_ROOT)/../include/limits.h) ${includedir}/../../lib/gcc-lib/msp430/3.0/include
+-	${INSTALL}	
++ins-hr:
++	mkdir -p ${includedir}
++	${INSTALL} $(wildcard $(SRC_ROOT)/../include/*.h) ${includedir}
++
++ins-hs:
++	mkdir -p ${includedir}/sys
++	${INSTALL} $(wildcard $(SRC_ROOT)/../include/sys/*.h) ${includedir}/sys
++
++ins-msp430:
++	mkdir -p ${includedir}/msp430
++	${INSTALL} $(wildcard $(SRC_ROOT)/../include/msp430/*.h) ${includedir}/msp430
++
++fix-limits:
++	mkdir -p ${includedir}/../../lib/gcc-lib/msp430/3.0/include
++	${INSTALL} $(wildcard $(SRC_ROOT)/../include/limits.h) ${includedir}/../../lib/gcc-lib/msp430/3.0/include
+ 
+ #--------------- directories ---------------
+-$(includedir) $(includedir)/sys $(includedir)/msp430:
+-	$(MD)
++#$(includedir) $(includedir)/sys $(includedir)/msp430:
++#    $(MD)
+ #------------------------------------------------------------------------
+ #------------------------------------------------------------------------
+ #------------------------------------------------------------------------
+@@ -186,8 +191,8 @@
+ clean-libc:
+ 	${RM} -f $(LIBC) $(LIBC_OBJS)
+ 
+-install-libc: $(LIBC) $(libdir)/$(MULTILIB_DIR)
+-	${INSTALL}
++install-libc:
++	${INSTALL} $(LIBC) $(libdir)/$(MULTILIB_DIR)
+ #------------------------------------------------------------------------
+ #-------------- Math & FP libs ---------------
+ 
+@@ -219,8 +224,8 @@
+ $(LIBFP): $(LIBFP_OBJS)
+ 	${AR} rc $@ $?
+ 
+-install-libm: $(LIBM) $(LIBFP) $(libdir)/$(MULTILIB_DIR)
+-	${INSTALL}
++install-libm:
++	${INSTALL} $(LIBM) $(LIBFP) $(libdir)/$(MULTILIB_DIR)
+ 
+ clean-libm:
+ 	${RM} -f $(LIBM) $(LIBFP) $(LIBM_OBJS) $(LIBFP_OBJS)
