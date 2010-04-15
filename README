@@ -8,8 +8,8 @@ support.
 
 3. Use the command `sudo crossdev msp430' to create a standard MSP430
 toolchain. Note that you can also specify a specific version for gcc (currently
-both 4.3.4 and 4.4.3 are in the overlay) and if you want gdb support installed
-for the MSP430 you should run `sudo crossdev --ex-gdb msp430' instead.
+both 4.3.4 and 4.4.3 are in the overlay) and if you want gdb support you should
+run `sudo crossdev --ex-gdb msp430' instead.
 
 4. Once crossdev successfully creates a toolchain you should symlink the
 ldscripts folder into a place where the linker will find it. If you don't do
