@@ -1,0 +1,18 @@
+Creating a MSP430 cross-compile toolchain on Gentoo
+-----------------------------------------------------
+
+1. Install sys-devel/crossdev from this overlay which includes proper msp430
+support.
+
+2. Use the command `sudo crossdev msp430' to create a standard MSP430
+toolchain. Note that you can also specify a specific version for gcc (currently
+both 4.3.4 and 4.4.3 are in the overlay) and if you want gdb support installed
+for the MSP430 you should run `sudo crossdev --ex-gdb msp430' instead.
+
+3. Once crossdev successfully creates a toolchain you should symlink the
+ldscripts folder into a place where the linker will find it. If you don't do
+this you may run into problems discussed in Gentoo bug #147155, especially if
+you're using flags specifying specific instruction sets. Running the command
+`sudo ln -s /usr/$CHOST/msp430/lib/ldscripts /usr/msp430/lib/ldscripts' where
+CHOST is something like x86_64-pc-linux-gnu or i686-pc-linux-gnu for standard
+amd64 or x86 architectures running Gentoo.
