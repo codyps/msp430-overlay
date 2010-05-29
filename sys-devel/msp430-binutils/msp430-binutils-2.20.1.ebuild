@@ -11,5 +11,5 @@ inherit toolchain-binutils
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~sparc-fbsd ~x86-fbsd"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-2.20.patch
+	epatch "${FILESDIR}"/${P}.patch
 }
