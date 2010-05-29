@@ -59,7 +59,7 @@ DEPEND="${RDEPEND}
 	amd64? ( multilib? ( gcj? ( app-emulation/emul-linux-x86-xlibs ) ) )
 	ppc? ( >=${CATEGORY}/binutils-2.17 )
 	ppc64? ( >=${CATEGORY}/binutils-2.17 )
-	>=${CATEGORY}/binutils-2.15.94"
+	>=${CATEGORY}/msp430-binutils-2.15.94"
 PDEPEND=">=sys-devel/gcc-config-1.4"
 if [[ ${CATEGORY} != cross-* ]] ; then
 	PDEPEND="${PDEPEND} elibc_glibc? ( >=sys-libs/glibc-2.8 )"
