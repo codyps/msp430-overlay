@@ -5,6 +5,7 @@
 EAPI="2"
 
 inherit eutils
+
 if [[ ${PV} == "99999999" ]] ; then
 	EGIT_REPO_URI="git://git.overlays.gentoo.org/proj/crossdev.git"
 	inherit git
