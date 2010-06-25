@@ -11,7 +11,7 @@
 +		      LCAT="dev-embedded"; LPKG="msp430-libc";
 +		      DCAT="sys-devel"; DPKG="msp430-gdb";
 +		      ICAT="dev-util"; IPKG="msp430-insight";
-+		      GUSE="-fortran" # doesn't work
++		      GUSE="-fortran -openmp" # doesn't work
 +		      WITH_DEF_HEADERS="no";;
  
  		nios2*)
