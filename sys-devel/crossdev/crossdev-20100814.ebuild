@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="2"
+EAPI="3"
 
 inherit eutils
 
@@ -12,8 +12,8 @@ if [[ ${PV} == "99999999" ]] ; then
 	SRC_URI=""
 	#KEYWORDS=""
 else
-	SRC_URI="mirror://gentoo/${P}.tar.lzma
-		http://dev.gentoo.org/~vapier/dist/${P}.tar.lzma"
+	SRC_URI="mirror://gentoo/${P}.tar.xz
+		http://dev.gentoo.org/~vapier/dist/${P}.tar.xz"
 	KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd"
 fi
 
@@ -27,10 +27,10 @@ IUSE=""
 RDEPEND=">=sys-apps/portage-2.1
 	app-shells/bash
 	!sys-devel/crossdev-wrappers"
-DEPEND=""
+DEPEND="app-arch/xz-utils"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-msp430.patch
+	epatch "${FILESDIR}"/${PN}-20100620-msp430.patch
 }
 
 src_install() {

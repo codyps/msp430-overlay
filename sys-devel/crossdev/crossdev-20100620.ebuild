@@ -14,7 +14,7 @@ if [[ ${PV} == "99999999" ]] ; then
 else
 	SRC_URI="mirror://gentoo/${P}.tar.lzma
 		http://dev.gentoo.org/~vapier/dist/${P}.tar.lzma"
-	KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd"
+	KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd"
 fi
 
 DESCRIPTION="Gentoo Cross-toolchain generator"
@@ -27,7 +27,7 @@ IUSE=""
 RDEPEND=">=sys-apps/portage-2.1
 	app-shells/bash
 	!sys-devel/crossdev-wrappers"
-DEPEND=""
+DEPEND="app-arch/xz-utils"
 
 src_prepare() {
 	epatch "${FILESDIR}"/${P}-msp430.patch
