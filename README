@@ -15,10 +15,11 @@ run `sudo crossdev --ex-gdb msp430' instead.
 
 4. Once crossdev successfully creates a toolchain you should symlink the
 ldscripts folder into a place where the linker will find it. If you don't do
-this you may run into problems discussed in Gentoo bug #147155, especially if
-you're using flags specifying specific instruction sets. Running the command
-`sudo ln -s /usr/$CHOST/msp430/lib/ldscripts /usr/msp430/lib/ldscripts' where
-$CHOST is something like x86_64-pc-linux-gnu or i686-pc-linux-gnu for standard
-amd64 or x86 architectures running Gentoo.
+this you may run into problems discussed in Gentoo bug #147155 [2], especially
+if you're using flags specifying specific instruction sets. Running the command
+`sudo ln -s /usr/$CHOST/msp430/lib/ldscripts /usr/msp430/lib/ldscripts'
+where $CHOST is something like x86_64-pc-linux-gnu or i686-pc-linux-gnu for
+standard amd64 or x86 architectures running Gentoo.
 
 [1] http://www.gentoo.org/proj/en/overlays/userguide.xml
+[2] http://bugs.gentoo.org/show_bug.cgi?id=147155
