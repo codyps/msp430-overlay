@@ -2,8 +2,8 @@ MSP430-overlay
 ==============
 
 How to use this overlay
-------------------
-Add this overlay to your Gentoo system. Use the command
+-----------------------
+* Add this overlay to your Gentoo system. Use the command
 +
 ............................
   # layman -a msp430
