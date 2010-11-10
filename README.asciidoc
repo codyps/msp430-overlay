@@ -21,25 +21,44 @@ generating msp430 and avr32 cross-compile toolchains.
 
 MSP430
 ~~~~~~
-1. Use the command `sudo crossdev --target msp430` to create a standard MSP430
-toolchain. Note that you can also specify a specific version for any toolchain
-package and if you want gdb support you should run `sudo crossdev --ex-gdb
-msp430` instead. See `crossdev --help` for more information.
+* Create a standard MSP430 cross-compile toolchain.
++
+.................................
+  # crossdev -t msp430
+.................................
++
+Note that you can also specify a specific version for any toolchain package and
+build optional packages like gdb. To find how to specify such options use the
+following command:
++
+...................
+  # crossdev --help
+...................
 
-2. Once crossdev successfully creates a toolchain you should symlink the
+
+* Once crossdev successfully creates a toolchain you should symlink the
 ldscripts folder into a place where the linker will find it. If you don't do
 this you may run into problems discussed in
 http://bugs.gentoo.org/show_bug.cgi?id=147155[bug #147155], especially if
-you're using flags specifying specific instruction sets. Running the command
-`sudo ln -s /usr/$CHOST/msp430/lib/ldscripts /usr/msp430/lib/ldscripts` where
-$CHOST is something like x86_64-pc-linux-gnu or i686-pc-linux-gnu for standard
-amd64 or x86 architectures running Gentoo.
+you're using flags specifying specific instruction sets. Run the command:
++
+.........................................................................
+  # ln -s /usr/$CHOST/msp430/lib/ldscripts /usr/msp430/lib/ldscripts
+.........................................................................
++
+where $CHOST is something like x86_64-pc-linux-gnu or i686-pc-linux-gnu for
+standard amd64 or x86 architectures running Gentoo.
 
 AVR32
 ~~~~~
-1. Install a version of gcc-4.2 if you don't have a version from the 4.2 slot
-installed on the host machine. This can be done using the command, emerge
-sys-devel/gcc:4.2, which will install the latest version in the 4.2 slot
+* Install a version of gcc-4.2 if you don't have a version from the 4.2 slot
+installed on the host machine. This can be done using the following command: 
++
+........................
+  # emerge sys-devel/gcc:4.2
+........................
++
+which will install the latest version in the 4.2 slot
 (4.2.4). Note that you'll probably want to modify the useflags for the gcc
 build since you don't need fortran support, etc.
 +
@@ -50,7 +69,14 @@ http://www.atmel.no/buildroot/buildroot-issues.html[here]) while building gcc
 if you are using
 >=gcc-4.3 on the host machine to build the cross-compile toolchain.
 
-2. Use gcc-config to switch to the gcc-4.2 profile.
+* Use gcc-config to switch to the gcc-4.2 profile.
++
+....................
+  # gcc-config 4.2.4
+....................
 
-3. Start crossdev on its way using the following target:
-avr32-unknown-linux-uclibc
+* Start crossdev on its way:
++
+..........................................
+  # crossdev -t avr32-unknown-linux-uclibc
+..........................................
