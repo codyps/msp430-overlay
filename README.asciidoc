@@ -88,3 +88,6 @@ if you are using
 ..........................................
  # crossdev -t avr32-unknown-linux-uclibc
 ..........................................
+
+* Don't forget to use gcc-config to switch back to your original gcc profile
+after the cross-compile toolchain has finished building.
