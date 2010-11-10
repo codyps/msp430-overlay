@@ -13,15 +13,15 @@ if you're already using layman to manage your overlays. See the
 http://www.gentoo.org/proj/en/overlays/userguide.xml[overlay user guide]
 for more information on overlay management with layman.
 
+* Install sys-devel/crossdev from this overlay which includes support for
+generating msp430 and avr32 cross-compile toolchains.
+
 Creating cross-compile toolchains on Gentoo
 -------------------------------------------
 Cross-compile toolchains are created using a tool called crossdev on Gentoo.
 See the
 http://www.gentoo.org/proj/en/base/embedded/cross-development.xml[cross-compiler
 section] of the Gentoo Embedded Handbook for more details.
-
-Install sys-devel/crossdev from this overlay which includes support for
-generating msp430 and avr32 cross-compile toolchains.
 
 MSP430
 ~~~~~~
