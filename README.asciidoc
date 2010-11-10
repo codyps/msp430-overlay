@@ -1,23 +1,32 @@
 MSP430-overlay
 ==============
 
-Creating a MSP430 cross-compile toolchain on Gentoo
----------------------------------------------------
-
-1. Add this overlay to your Gentoo system. Use the command `layman -a msp430`
+.Using this overlay
+******************************************************************************
+Add this overlay to your Gentoo system. Use the command `layman -a msp430`
 if you're already using layman to manage your overlays. See the
 http://www.gentoo.org/proj/en/overlays/userguide.xml[overlay user guide]
 for more information on overlay management with layman.
+******************************************************************************
 
-2. Install sys-devel/crossdev from this overlay which includes proper msp430
-support.
+Creating cross-compile toolchains on Gentoo
+-------------------------------------------
+Cross-compile toolchains are created using a tool called crossdev on Gentoo.
+See the
+http://www.gentoo.org/proj/en/base/embedded/cross-development.xml[cross-compiler
+section] of the Gentoo Embedded Handbook for more details.
 
-3. Use the command `sudo crossdev --target msp430` to create a standard MSP430
+Install sys-devel/crossdev from this overlay which includes support for
+generating msp430 and avr32 cross-compile toolchains.
+
+MSP430
+~~~~~~
+1. Use the command `sudo crossdev --target msp430` to create a standard MSP430
 toolchain. Note that you can also specify a specific version for any toolchain
 package and if you want gdb support you should run `sudo crossdev --ex-gdb
 msp430` instead. See `crossdev --help` for more information.
 
-4. Once crossdev successfully creates a toolchain you should symlink the
+2. Once crossdev successfully creates a toolchain you should symlink the
 ldscripts folder into a place where the linker will find it. If you don't do
 this you may run into problems discussed in
 http://bugs.gentoo.org/show_bug.cgi?id=147155[bug #147155], especially if
@@ -25,3 +34,23 @@ you're using flags specifying specific instruction sets. Running the command
 `sudo ln -s /usr/$CHOST/msp430/lib/ldscripts /usr/msp430/lib/ldscripts` where
 $CHOST is something like x86_64-pc-linux-gnu or i686-pc-linux-gnu for standard
 amd64 or x86 architectures running Gentoo.
+
+AVR32
+-----
+1. Install a version of gcc-4.2 if you don't have a version from the 4.2 slot
+installed on the host machine. This can be done using the command, emerge
+sys-devel/gcc:4.2, which will install the latest version in the 4.2 slot
+(4.2.4). Note that you'll probably want to modify the useflags for the gcc
+build since you don't need fortran support, etc.
+
+GCC-4.2 is required (it may also work with earlier releases in the 4.x series
+but I haven't tested) because the latest avr32 crosscompile toolchain will
+throw assembler errors (similar to the invalid register list errors described
+http://www.atmel.no/buildroot/buildroot-issues.html[here]) while building gcc
+if you are using
+>=gcc-4.3 on the host machine to build the cross-compile toolchain.
+
+2. Use gcc-config to switch to the gcc-4.2 profile.
+
+3. Start crossdev on its way using the following target:
+avr32-unknown-linux-uclibc
