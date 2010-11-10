@@ -6,7 +6,7 @@ How to use this overlay
 * Add this overlay to your Gentoo system. Use the command
 +
 ............................
-  # layman -a msp430
+ # layman -a msp430
 ............................
 +
 if you're already using layman to manage your overlays. See the
@@ -28,7 +28,7 @@ MSP430
 * Create a standard MSP430 cross-compile toolchain.
 +
 .................................
-  # crossdev -t msp430
+ # crossdev -t msp430
 .................................
 +
 Note that you can also specify a specific version for any toolchain package and
@@ -36,7 +36,7 @@ build optional packages like gdb. To find how to specify such options use the
 following command:
 +
 ...................
-  # crossdev --help
+ # crossdev --help
 ...................
 
 
@@ -47,7 +47,7 @@ http://bugs.gentoo.org/show_bug.cgi?id=147155[bug #147155], especially if
 you're using flags specifying specific instruction sets. Run the command:
 +
 .........................................................................
-  # ln -s /usr/$CHOST/msp430/lib/ldscripts /usr/msp430/lib/ldscripts
+ # ln -s /usr/$CHOST/msp430/lib/ldscripts /usr/msp430/lib/ldscripts
 .........................................................................
 +
 where $CHOST is something like x86_64-pc-linux-gnu or i686-pc-linux-gnu for
@@ -59,7 +59,7 @@ AVR32
 installed on the host machine. This can be done using the following command: 
 +
 ........................
-  # emerge sys-devel/gcc:4.2
+ # emerge sys-devel/gcc:4.2
 ........................
 +
 which will install the latest version in the 4.2 slot
@@ -76,11 +76,11 @@ if you are using
 * Use gcc-config to switch to the gcc-4.2 profile.
 +
 ....................
-  # gcc-config 4.2.4
+ # gcc-config 4.2.4
 ....................
 
 * Start crossdev on its way:
 +
 ..........................................
-  # crossdev -t avr32-unknown-linux-uclibc
+ # crossdev -t avr32-unknown-linux-uclibc
 ..........................................
