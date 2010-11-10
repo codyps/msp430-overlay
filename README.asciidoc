@@ -42,7 +42,7 @@ installed on the host machine. This can be done using the command, emerge
 sys-devel/gcc:4.2, which will install the latest version in the 4.2 slot
 (4.2.4). Note that you'll probably want to modify the useflags for the gcc
 build since you don't need fortran support, etc.
-
++
 GCC-4.2 is required (it may also work with earlier releases in the 4.x series
 but I haven't tested) because the latest avr32 crosscompile toolchain will
 throw assembler errors (similar to the invalid register list errors described
