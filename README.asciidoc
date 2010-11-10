@@ -1,13 +1,17 @@
 MSP430-overlay
 ==============
 
-.Using this overlay
-******************************************************************************
-Add this overlay to your Gentoo system. Use the command `layman -a msp430`
+How to use this overlay
+------------------
+Add this overlay to your Gentoo system. Use the command
++
+............................
+  # layman -a msp430
+............................
++
 if you're already using layman to manage your overlays. See the
 http://www.gentoo.org/proj/en/overlays/userguide.xml[overlay user guide]
 for more information on overlay management with layman.
-******************************************************************************
 
 Creating cross-compile toolchains on Gentoo
 -------------------------------------------
