@@ -190,6 +190,11 @@ static struct mcu_type_s msp430_mcu_types[] = {
 	{"msp430x2122",  MSP430_ISA_22, 0},
 	{"msp430x2132",  MSP430_ISA_22, 0},
 
+	{"msp430x2201",  MSP430_ISA_22, 0}, /* Value-Line */
+	{"msp430x2211",  MSP430_ISA_22, 0}, /* Value-Line */
+	{"msp430x2221",  MSP430_ISA_22, 0}, /* Value-Line */
+	{"msp430x2231",  MSP430_ISA_22, 0}, /* Value-Line */
+
 	{"msp430x2232",  MSP430_ISA_22, 0},
 	{"msp430x2252",  MSP430_ISA_22, 0},
 	{"msp430x2272",  MSP430_ISA_22, 0},
@@ -491,6 +496,9 @@ void
 msp430_override_options (void)
 {
 	const struct mcu_type_s *t;
+
+        if (flag_pic)
+          error ("PIC not supported on msp430");
 
 	for (t = msp430_mcu_types; t->name; t++)
 	{
