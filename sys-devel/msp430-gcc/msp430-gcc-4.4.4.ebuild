@@ -75,7 +75,7 @@ src_unpack() {
 	[[ ${CHOST} == ${CTARGET} ]] && epatch "${FILESDIR}"/gcc-spec-env.patch
 
 	[[ ${CTARGET} == *-softfloat-* ]] && epatch "${FILESDIR}"/4.4.0/gcc-4.4.0-softfloat.patch
-	
+
 	cp -r "${FILESDIR}"/msp430-gcc-4.x/* "${S}"
-	epatch "${FILESDIR}"/${P}.patch
+	epatch "${FILESDIR}"/${PN}-4.4.3.patch
 }

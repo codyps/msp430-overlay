@@ -297,7 +297,12 @@ static struct mcu_type_s msp430_mcu_types[] = {
 	{"msp430x4784",  MSP430_ISA_47, 1},
 	{"msp430x4793",  MSP430_ISA_47, 1},
 	{"msp430x4794",  MSP430_ISA_47, 1},
-        
+
+	{"msp430x47163", MSP430_ISA_471, 1},
+	{"msp430x47173", MSP430_ISA_471, 1},
+	{"msp430x47183", MSP430_ISA_471, 1},
+	{"msp430x47193", MSP430_ISA_471, 1},
+
 	{"msp430x47166", MSP430_ISA_471, 1},
 	{"msp430x47176", MSP430_ISA_471, 1},
 	{"msp430x47186", MSP430_ISA_471, 1},
@@ -315,6 +320,17 @@ static struct mcu_type_s msp430_mcu_types[] = {
 	{"msp430x5436",  MSP430_ISA_54, 1},
 	{"msp430x5437",  MSP430_ISA_54, 1},
 	{"msp430x5438",  MSP430_ISA_54, 1},
+
+        {"msp430x5500",  MSP430_ISA_54, 1},
+        {"msp430x5501",  MSP430_ISA_54, 1},
+        {"msp430x5502",  MSP430_ISA_54, 1},
+        {"msp430x5503",  MSP430_ISA_54, 1},
+        {"msp430x5504",  MSP430_ISA_54, 1},
+        {"msp430x5505",  MSP430_ISA_54, 1},
+        {"msp430x5506",  MSP430_ISA_54, 1},
+        {"msp430x5507",  MSP430_ISA_54, 1},
+        {"msp430x5508",  MSP430_ISA_54, 1},
+        {"msp430x5509",  MSP430_ISA_54, 1},
 
         {"msp430x5510",  MSP430_ISA_54, 1},
         {"msp430x5513",  MSP430_ISA_54, 1},
@@ -656,6 +672,7 @@ asm_declare_function_name (
 		case MSP430_ISA_241:
 		case MSP430_ISA_26:
 		case MSP430_ISA_46:
+		case MSP430_ISA_471:
 			vectors_start = 0xffc0;
 			break;
 		case MSP430_ISA_54:

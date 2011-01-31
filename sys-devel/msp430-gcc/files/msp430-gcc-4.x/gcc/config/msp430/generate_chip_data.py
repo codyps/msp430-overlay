@@ -1,3 +1,30 @@
+# This script generates code/makefile blocks for chips in the legacy
+# mspgcc infrastructure.  The relevant data can be obtained from the
+# ti branch of the msp430-libc repository by running the genoldall.py
+# script from the include subdirectory.  Note that additional changes
+# must be made within binutils-430.
+#
+# * Add the chip names and architecture specifications to the text
+#   block below.  
+#
+# * Add the same text to the msp430_mcu_types[] array in msp430.c.
+#
+# * Replace the contents of the msp430.h:LINK_SPEC define with the
+#   contents of the LINK_SPEC file.  Retain the default mmcu spec, and
+#   the mappings from the mspX generic aliases.
+#
+# * Replace the contents of the msp430.h:CRT_BINUTILS_SPECS define
+#   with the contents of the CRT_BINUTILS_SPECS file.  Edit the first
+#   line to retain the default mmcu spec.
+#
+# * Replace the contents of the t-msp430:MULTILIB_MATCHES define with
+#   the contents of the MULTILIB_MATCHES file.
+#
+# * Run (git) diff to verify that you haven't changed something you
+#   didn't mean to change.
+#
+
+
 # This text should be extracted from msp430.c
 text = '''
 	/* F1xx family */
@@ -164,6 +191,11 @@ text = '''
 	{"msp430x4784",  MSP430_ISA_47, 1},
 	{"msp430x4793",  MSP430_ISA_47, 1},
 	{"msp430x4794",  MSP430_ISA_47, 1},
+
+	{"msp430x47163", MSP430_ISA_471, 1},
+	{"msp430x47173", MSP430_ISA_471, 1},
+	{"msp430x47183", MSP430_ISA_471, 1},
+	{"msp430x47193", MSP430_ISA_471, 1},
         
 	{"msp430x47166", MSP430_ISA_471, 1},
 	{"msp430x47176", MSP430_ISA_471, 1},
@@ -182,6 +214,17 @@ text = '''
 	{"msp430x5436",  MSP430_ISA_54, 1},
 	{"msp430x5437",  MSP430_ISA_54, 1},
 	{"msp430x5438",  MSP430_ISA_54, 1},
+
+        {"msp430x5500",  MSP430_ISA_54, 1},
+        {"msp430x5501",  MSP430_ISA_54, 1},
+        {"msp430x5502",  MSP430_ISA_54, 1},
+        {"msp430x5503",  MSP430_ISA_54, 1},
+        {"msp430x5504",  MSP430_ISA_54, 1},
+        {"msp430x5505",  MSP430_ISA_54, 1},
+        {"msp430x5506",  MSP430_ISA_54, 1},
+        {"msp430x5507",  MSP430_ISA_54, 1},
+        {"msp430x5508",  MSP430_ISA_54, 1},
+        {"msp430x5509",  MSP430_ISA_54, 1},
 
         {"msp430x5510",  MSP430_ISA_54, 1},
         {"msp430x5513",  MSP430_ISA_54, 1},

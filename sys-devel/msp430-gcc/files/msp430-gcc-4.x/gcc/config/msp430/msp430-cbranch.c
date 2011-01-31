@@ -594,6 +594,25 @@ static const char *msp430_emit_bleu (rtx operands[], int len)
 	return "";
 }
 
+/* r14:HI and r14:SI are not rtx_equal_p, because the latter
+ * represents r14:HI and r15:HI in one.  They are equal in the sense
+ * that writing to the former destroys the latter, invalidating
+ * condition codes.  Check for overlap in this case. */
+static int rtx_matches_ (const_rtx x, const_rtx y)
+{
+	if (x && y && REG_P(x) && REG_P(y))
+	{
+		int x0 = GET_MODE_SIZE(HImode) * REGNO(x);
+		int x1 = x0 + GET_MODE_SIZE(GET_MODE(x));
+		int y0 = GET_MODE_SIZE(HImode) * REGNO(y);
+		int y1 = y0 + GET_MODE_SIZE(GET_MODE(y));
+                /* Does (x0, x1) overlap (y0, y1)? */
+		if (x1 >= y0 && x0 <= y1)
+			return 1;
+	}
+	return rtx_equal_p(x, y);
+}
+
 /*  x - dst
 y - src */
 static int msp430_cc_source (rtx insn, enum rtx_code code, rtx x, rtx y)
@@ -634,11 +653,10 @@ static int msp430_cc_source (rtx insn, enum rtx_code code, rtx x, rtx y)
 			{
 				/*The one spot by Nick C. */
 				dst = SET_DEST (set);
-				if((dst && rtx_equal_p (x, dst)) ||
-					(x1 && dst && rtx_equal_p (x1, dst)))
+				if((dst && rtx_matches_ (x, dst)) ||
+					(x1 && dst && rtx_matches_ (x1, dst)))
 					return 0;
-				else
-					continue;
+				continue;
 			}
 
 			if (cc == CC_CLOBBER)	/* clobber */
@@ -650,10 +668,9 @@ static int msp430_cc_source (rtx insn, enum rtx_code code, rtx x, rtx y)
 				if (GET_CODE (set) == IOR)	/* does not change CC */
 				{
 					dst = SET_DEST (set);
-					if(dst && rtx_equal_p (x, dst))
+					if(dst && rtx_matches_ (x, dst))
 						return 0;
-					else
-						continue;
+					continue;
 				}
 			}
 
