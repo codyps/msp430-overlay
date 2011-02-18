@@ -669,9 +669,10 @@ asm_declare_function_name (
 		*/
 		switch (msp430_get_arch())
 		{
-		case MSP430_ISA_241:
+		case MSP430_ISA_24:
 		case MSP430_ISA_26:
 		case MSP430_ISA_46:
+		case MSP430_ISA_241:
 		case MSP430_ISA_471:
 			vectors_start = 0xffc0;
 			break;
@@ -8349,7 +8350,6 @@ msp430_rtx_costs (rtx x, int code, int outer_code, int *total)
 	if (outer_code == SET)
 	{
 		op0 = XEXP (x, 0);
-		op1 = XEXP (x, 1);
 		switch (code)
 		{
 		case CONST_INT:	/* source only !!! */
@@ -8373,6 +8373,7 @@ msp430_rtx_costs (rtx x, int code, int outer_code, int *total)
 		case ASHIFT:
 		case LSHIFTRT:
 		case ASHIFTRT:
+			op1 = XEXP (x, 1);
 			/* cst = COSTS_N_INSNS(10);
 			break; */
 			if (CONSTANT_P (op1) && INTVAL (op1) == 1)
