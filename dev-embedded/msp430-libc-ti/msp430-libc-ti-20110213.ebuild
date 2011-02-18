@@ -1,4 +1,4 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -24,7 +24,7 @@ DEPEND=">=sys-devel/crossdev-0.9.1"
 	&& RDEPEND="!dev-embedded/msp430-libc-ti" \
 	|| RDEPEND=""
 
-S="${WORKDIR}"/${MY_P}/src
+S=${WORKDIR}/${MY_P}/src
 
 pkg_setup() {
 	ebegin "Checking for msp430-gcc"
@@ -39,10 +39,6 @@ pkg_setup() {
 		eerror
 		die "MSP430 toolchain not found"
 	fi
-}
-
-src_prepare() {
-	epatch "${FILESDIR}"/${PN}-20100815-makefile.patch
 }
 
 src_install() {
