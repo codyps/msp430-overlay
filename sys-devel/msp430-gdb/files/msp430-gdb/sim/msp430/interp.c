@@ -1319,7 +1319,7 @@ int
 sim_write (sd, addr, buffer, size)
 SIM_DESC sd;
 SIM_ADDR addr;
-const unsigned char * buffer;
+unsigned char * buffer;
 int size;
 {
   memcpy (& alu.mem[(addr&0xfffful)], buffer, size);
