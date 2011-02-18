@@ -1,3 +1,63 @@
+Copyright 2000-2011 Free Software Foundation, Inc.
+
+The material in this patch is a derivative work of the binutils package,
+and is subject to licensing and copyright of its parent package.
+
+This patch adds/enhances support for the Texas Instruments MSP430 family of
+microcontrollers to GNU binutils.  The material incorporated is maintained
+in a git repository hosted at:
+
+  git://mspgcc.git.sourceforge.net/gitroot/mspgcc/binutils
+
+This patch incorporates changes between:
+  upstream/release/binutils-2.21 (42d590bfd48c996fc14b938e9afe916cd0415c0b)
+and
+  legacy/release/binutils-2.21 (d1d43b665afa608fb8e4361da5e212fd43091bfc)
+
+To build, obtain the upstream release distribution from:
+  ftp://ftp.gnu.org/pub/gnu/binutils/binutils-2.21.tar.gz
+
+Unpack the distribution, apply the patch, and build.  (Note: The example
+commands are in Bourne-shell syntax.)
+
+  tar xzf binutils-2.21.tar.gz
+  ( cd binutils-2.21 ; patch -p1 < ../msp430-legacy-binutils-2.21.patch )
+  mkdir -p BUILD/binutils
+  cd BUILD/binutils
+  ../../binutils-2.21/configure \
+    --target=msp430 \
+    --prefix=/usr/local/msp430 \
+  2>&1 | tee co
+  make 2>&1 | tee mo
+  make install 2>&1 | tee moi
+
+For support please use the mspgcc-users mailing list.  You can subscribe at
+https://lists.sourceforge.net/lists/listinfo/mspgcc-users.  Once subscribed,
+you can post by email to mspgcc-users@lists.sourceforge.net.  To report
+bugs, please file a tracker ticket on SourceForge at
+https://sourceforge.net/tracker/?group_id=42303&atid=432701
+
+Patch file generated: 2011-02-13T15:47:53-06:00
+
+Log of relevant changes:
+d1d43b6 [2011-02-10 17:14:57 -0600] Regenerate (bad automake used before)
+26f352f [2011-02-10 17:01:58 -0600] SF 3177314: undefined reference with too many template parameters
+efe5cd6 [2011-02-08 17:00:56 -0600] SF 3175134: wrong vector address for F2132
+d74a659 [2011-02-05 21:37:53 -0600] Correct vector start for ISA_24 chips
+b2bc67a [2011-02-05 13:31:09 -0600] Regenerate
+b8bddf2 [2011-02-05 13:29:08 -0600] Update to match MCUs in msp430all.sh
+7ccc76c [2011-01-26 11:53:58 -0600] SF 3154622: Correct support for MSP430F2132
+df8c640 [2011-01-26 11:12:49 -0600] SF 3146404: Support for msp430f550x chips
+66dc30f [2011-01-21 16:01:15 +0200] Add support for msp430f471x3
+e845ac1 [2010-11-14 10:07:12 -0600] SF 3109143: Support value-line MSP430G22x1 devices
+3909fd6 [2010-11-06 14:31:43 -0500] SF 3096352: Illegal disassembly instruction (addx.a R14,R15)
+e291e09 [2010-08-29 13:11:44 -0500] SF 3055519: add support for 55xx chips
+a0f3a60 [2010-05-27 12:22:04 -0500] Replace undefined cc430x5123 with missing cc430x5133
+aeec5cc [2010-05-27 11:32:07 -0500] Fix info/bsl locations on newer chips
+70aa46c [2011-01-02 10:53:49 -0600] Apply binutils-2.20.patch from revision aac9a66b of mspgcc4 repository.
+
+diff --git binutils-2.21.orig/bfd/archures.c binutils-2.21/bfd/archures.c
+index 1867154..db52005 100644
 --- binutils-2.21.orig/bfd/archures.c
 +++ binutils-2.21/bfd/archures.c
 @@ -405,7 +405,13 @@ DESCRIPTION
@@ -25,6 +85,8 @@
  .  bfd_arch_xc16x,     {* Infineon's XC16X Series.               *}
  .#define bfd_mach_xc16x         1
  .#define bfd_mach_xc16xl        2
+diff --git binutils-2.21.orig/bfd/bfd-in2.h binutils-2.21/bfd/bfd-in2.h
+index c6a54b5..47351ec 100644
 --- binutils-2.21.orig/bfd/bfd-in2.h
 +++ binutils-2.21/bfd/bfd-in2.h
 @@ -2085,7 +2085,13 @@ enum bfd_architecture
@@ -78,6 +140,8 @@
  
  /* IQ2000 Relocations.  */
    BFD_RELOC_IQ2000_OFFSET_16,
+diff --git binutils-2.21.orig/bfd/cpu-msp430.c binutils-2.21/bfd/cpu-msp430.c
+index 63c301a..8cc47cb 100644
 --- binutils-2.21.orig/bfd/cpu-msp430.c
 +++ binutils-2.21/bfd/cpu-msp430.c
 @@ -65,29 +65,60 @@ static const bfd_arch_info_type arch_info_struct[] =
@@ -149,34 +213,8 @@
  };
  
  const bfd_arch_info_type bfd_msp430_arch =
---- binutils-2.21.orig/bfd/doc/archures.texi
-+++ binutils-2.21/bfd/doc/archures.texi
-@@ -370,7 +370,12 @@ enum bfd_architecture
- #define bfd_mach_msp14          14
- #define bfd_mach_msp15          15
- #define bfd_mach_msp16          16
-+#define bfd_mach_msp20          20
- #define bfd_mach_msp21          21
-+#define bfd_mach_msp22          22
-+#define bfd_mach_msp24          24
-+#define bfd_mach_msp241         241
-+#define bfd_mach_msp26          26
- #define bfd_mach_msp31          31
- #define bfd_mach_msp32          32
- #define bfd_mach_msp33          33
-@@ -378,6 +383,7 @@ enum bfd_architecture
- #define bfd_mach_msp42          42
- #define bfd_mach_msp43          43
- #define bfd_mach_msp44          44
-+#define bfd_mach_msp46          46
-   bfd_arch_xc16x,     /* Infineon's XC16X Series.               */
- #define bfd_mach_xc16x         1
- #define bfd_mach_xc16xl        2
-@@ -627,4 +633,3 @@ See bfd_octets_per_byte.
- 
- This routine is provided for those cases where a bfd * is not
- available
--
+diff --git binutils-2.21.orig/bfd/elf32-msp430.c binutils-2.21/bfd/elf32-msp430.c
+index 9a5fb2a..53cb3b1 100644
 --- binutils-2.21.orig/bfd/elf32-msp430.c
 +++ binutils-2.21/bfd/elf32-msp430.c
 @@ -90,7 +90,7 @@ static reloc_howto_type elf_msp430_howto_table[] =
@@ -881,6 +919,8 @@
  	}
      }
  
+diff --git binutils-2.21.orig/bfd/libbfd.h binutils-2.21/bfd/libbfd.h
+index e706ce4..c21ca2f 100644
 --- binutils-2.21.orig/bfd/libbfd.h
 +++ binutils-2.21/bfd/libbfd.h
 @@ -2165,6 +2165,25 @@ static const char *const bfd_reloc_code_real_names[] = { "@@uninitialized@@",
@@ -909,6 +949,8 @@
    "BFD_RELOC_IQ2000_OFFSET_16",
    "BFD_RELOC_IQ2000_OFFSET_21",
    "BFD_RELOC_IQ2000_UHI16",
+diff --git binutils-2.21.orig/bfd/reloc.c binutils-2.21/bfd/reloc.c
+index 5a428a2..8fa1386 100644
 --- binutils-2.21.orig/bfd/reloc.c
 +++ binutils-2.21/bfd/reloc.c
 @@ -5216,6 +5216,44 @@ ENUMX
@@ -956,6 +998,8 @@
  ENUMDOC
    msp430 specific relocation codes
  
+diff --git binutils-2.21.orig/gas/config/tc-msp430.c binutils-2.21/gas/config/tc-msp430.c
+index 98d90c6..ac3ff53 100644
 --- binutils-2.21.orig/gas/config/tc-msp430.c
 +++ binutils-2.21/gas/config/tc-msp430.c
 @@ -23,7 +23,6 @@
@@ -999,7 +1043,16 @@
    int    tlab;		/* Number of labels in short mode.  */
    int    op0;		/* Opcode for first word of short jump.  */
    int    op1;		/* Opcode for second word of short jump.  */
-@@ -237,107 +238,294 @@ struct mcu_type_s
+@@ -228,8 +229,6 @@ relax_typeS md_relax_table[] =
+ };
+ 
+ 
+-#define MAX_OP_LEN	256
+-
+ struct mcu_type_s
+ {
+   char * name;
+@@ -237,107 +236,294 @@ struct mcu_type_s
    int mach;
  };
  
@@ -1024,44 +1077,7 @@
 -
 -static struct mcu_type_s mcu_types[] =
 +enum
- {
--  {"msp1",        MSP430_ISA_11, bfd_mach_msp11},
--  {"msp2",        MSP430_ISA_14, bfd_mach_msp14},
--  {"msp430x110",  MSP430_ISA_11, bfd_mach_msp11},
--  {"msp430x112",  MSP430_ISA_11, bfd_mach_msp11},
--  {"msp430x1101", MSP430_ISA_110, bfd_mach_msp110},
--  {"msp430x1111", MSP430_ISA_110, bfd_mach_msp110},
--  {"msp430x1121", MSP430_ISA_110, bfd_mach_msp110},
--  {"msp430x1122", MSP430_ISA_11, bfd_mach_msp110},
--  {"msp430x1132", MSP430_ISA_11, bfd_mach_msp110},
--
--  {"msp430x122",  MSP430_ISA_12, bfd_mach_msp12},
--  {"msp430x123",  MSP430_ISA_12, bfd_mach_msp12},
--  {"msp430x1222", MSP430_ISA_12, bfd_mach_msp12},
--  {"msp430x1232", MSP430_ISA_12, bfd_mach_msp12},
--
--  {"msp430x133",  MSP430_ISA_13, bfd_mach_msp13},
--  {"msp430x135",  MSP430_ISA_13, bfd_mach_msp13},
--  {"msp430x1331", MSP430_ISA_13, bfd_mach_msp13},
--  {"msp430x1351", MSP430_ISA_13, bfd_mach_msp13},
--  {"msp430x147",  MSP430_ISA_14, bfd_mach_msp14},
--  {"msp430x148",  MSP430_ISA_14, bfd_mach_msp14},
--  {"msp430x149",  MSP430_ISA_14, bfd_mach_msp14},
--
--  {"msp430x155",  MSP430_ISA_15, bfd_mach_msp15},
--  {"msp430x156",  MSP430_ISA_15, bfd_mach_msp15},
--  {"msp430x157",  MSP430_ISA_15, bfd_mach_msp15},
--  {"msp430x167",  MSP430_ISA_16, bfd_mach_msp16},
--  {"msp430x168",  MSP430_ISA_16, bfd_mach_msp16},
--  {"msp430x169",  MSP430_ISA_16, bfd_mach_msp16},
--  {"msp430x1610", MSP430_ISA_16, bfd_mach_msp16},
--  {"msp430x1611", MSP430_ISA_16, bfd_mach_msp16},
--  {"msp430x1612", MSP430_ISA_16, bfd_mach_msp16},
--
--  {"msp430x2101", MSP430_ISA_21, bfd_mach_msp21},
--  {"msp430x2111", MSP430_ISA_21, bfd_mach_msp21},
--  {"msp430x2121", MSP430_ISA_21, bfd_mach_msp21},
--  {"msp430x2131", MSP430_ISA_21, bfd_mach_msp21},
++{
 +  CORE_MASK = 0x3,
 +  CPU4_BUG = 1 << 2,    // push #4, push #8 cannot use CG
 +  CPU7_BUG = 1 << 3,    // CALL and PUSH with @SP+, @SP, and X(SP) uses the SP to calculate the address, then decrements it
@@ -1119,7 +1135,44 @@
 +#define CHECK_RELOC_MSP430X_PCREL_DST_2ND   ((imm_op || op_width == BYTE_OP) ? BFD_RELOC_MSP430X_PCREL_DST_2ND_BYTE : BFD_RELOC_MSP430X_PCREL_DST_2ND)
 +
 +static struct mcu_type_s const mcu_types[] =
-+{
+ {
+-  {"msp1",        MSP430_ISA_11, bfd_mach_msp11},
+-  {"msp2",        MSP430_ISA_14, bfd_mach_msp14},
+-  {"msp430x110",  MSP430_ISA_11, bfd_mach_msp11},
+-  {"msp430x112",  MSP430_ISA_11, bfd_mach_msp11},
+-  {"msp430x1101", MSP430_ISA_110, bfd_mach_msp110},
+-  {"msp430x1111", MSP430_ISA_110, bfd_mach_msp110},
+-  {"msp430x1121", MSP430_ISA_110, bfd_mach_msp110},
+-  {"msp430x1122", MSP430_ISA_11, bfd_mach_msp110},
+-  {"msp430x1132", MSP430_ISA_11, bfd_mach_msp110},
+-
+-  {"msp430x122",  MSP430_ISA_12, bfd_mach_msp12},
+-  {"msp430x123",  MSP430_ISA_12, bfd_mach_msp12},
+-  {"msp430x1222", MSP430_ISA_12, bfd_mach_msp12},
+-  {"msp430x1232", MSP430_ISA_12, bfd_mach_msp12},
+-
+-  {"msp430x133",  MSP430_ISA_13, bfd_mach_msp13},
+-  {"msp430x135",  MSP430_ISA_13, bfd_mach_msp13},
+-  {"msp430x1331", MSP430_ISA_13, bfd_mach_msp13},
+-  {"msp430x1351", MSP430_ISA_13, bfd_mach_msp13},
+-  {"msp430x147",  MSP430_ISA_14, bfd_mach_msp14},
+-  {"msp430x148",  MSP430_ISA_14, bfd_mach_msp14},
+-  {"msp430x149",  MSP430_ISA_14, bfd_mach_msp14},
+-
+-  {"msp430x155",  MSP430_ISA_15, bfd_mach_msp15},
+-  {"msp430x156",  MSP430_ISA_15, bfd_mach_msp15},
+-  {"msp430x157",  MSP430_ISA_15, bfd_mach_msp15},
+-  {"msp430x167",  MSP430_ISA_16, bfd_mach_msp16},
+-  {"msp430x168",  MSP430_ISA_16, bfd_mach_msp16},
+-  {"msp430x169",  MSP430_ISA_16, bfd_mach_msp16},
+-  {"msp430x1610", MSP430_ISA_16, bfd_mach_msp16},
+-  {"msp430x1611", MSP430_ISA_16, bfd_mach_msp16},
+-  {"msp430x1612", MSP430_ISA_16, bfd_mach_msp16},
+-
+-  {"msp430x2101", MSP430_ISA_21, bfd_mach_msp21},
+-  {"msp430x2111", MSP430_ISA_21, bfd_mach_msp21},
+-  {"msp430x2121", MSP430_ISA_21, bfd_mach_msp21},
+-  {"msp430x2131", MSP430_ISA_21, bfd_mach_msp21},
 +  {"msp1",         MSP430_ISA_11,  bfd_mach_msp11},
 +  {"msp2",         MSP430_ISA_14,  bfd_mach_msp14},
 +  {"msp3",         MSP430_ISA_46,  bfd_mach_msp46},
@@ -1386,7 +1439,7 @@
  
  /* Profiling capability:
     It is a performance hit to use gcc's profiling approach for this tiny target.
-@@ -446,11 +634,14 @@ pow2value (int y)
+@@ -446,32 +632,14 @@ pow2value (int y)
  static char *
  parse_exp (char * s, expressionS * op)
  {
@@ -1398,40 +1451,190 @@
    if (op->X_op == O_absent)
      as_bad (_("missing operand"));
 -  return input_line_pointer;
+-}
+-
+-
+-/* Delete spaces from s: X ( r 1  2)  => X(r12).  */
+-
+-static void
+-del_spaces (char * s)
+-{
+-  while (*s)
+-    {
+-      if (ISSPACE (*s))
+-	{
+-	  char *m = s + 1;
+-
+-	  while (ISSPACE (*m) && *m)
+-	    m++;
+-	  memmove (s, m, strlen (m) + 1);
+-	}
+-      else
+-	s++;
+-    }
 +  return s;
  }
  
+ static inline char *
+@@ -485,39 +653,44 @@ skip_space (char * s)
+ /* Extract one word from FROM and copy it to TO. Delimiters are ",;\n"  */
  
-@@ -504,7 +695,8 @@ extract_operand (char * from, char * to, int limit)
-   *(to + size) = 0;
-   del_spaces (to);
+ static char *
+-extract_operand (char * from, char * to, int limit)
++get_operand (void)
+ {
+-  int size = 0;
++  char* sp = input_line_pointer;
++  char* end_ilp;
++  char* dest;
++  char* dp;
++  int operand_length = 0;
  
+-  /* Drop leading whitespace.  */
+-  from = skip_space (from);
+-
+-  while (size < limit && *from)
++  while (sp && ',' != *sp && ';' != *sp && '\n' != *sp)
+     {
+-      *(to + size) = *from;
+-      if (*from == ',' || *from == ';' || *from == '\n')
+-	break;
+-      from++;
+-      size++;
++      if (! ISSPACE(*sp))
++	++operand_length;
++      ++sp;
+     }
+-
+-  *(to + size) = 0;
+-  del_spaces (to);
+-
 -  from++;
-+  if(*from == ',')
-+    from++;
- 
-   return from;
+-
+-  return from;
++  end_ilp = sp;
++  if (',' == *end_ilp)
++    ++end_ilp;
++  
++  dp = dest = xmalloc(operand_length + 1);
++  sp = input_line_pointer;
++  while (0 < operand_length) {
++    if (! ISSPACE(*sp)) {
++      *dp++ = *sp;
++      --operand_length;
++    }
++    ++sp;
++  }
++  *dp = 0;
++  input_line_pointer = end_ilp;
++  return dest;
  }
-@@ -549,7 +741,8 @@ msp430_profiler (int dummy ATTRIBUTE_UNUSED)
+ 
+ static void
+ msp430_profiler (int dummy ATTRIBUTE_UNUSED)
+ {
+-  char   buffer[1024];
+-  char   f[32];
+-  char * str = buffer;
+-  char * flags = f;
++  char * flag_token = 0;
++  char * flags;
+   int    p_flags = 0;
+-  char * halt;
+   int    ops = 0;
+   int    left;
+   char * s;
+@@ -549,8 +722,7 @@ msp430_profiler (int dummy ATTRIBUTE_UNUSED)
        return;
      }
  
 -  input_line_pointer = extract_operand (input_line_pointer, flags, 32);
-+  input_line_pointer = extract_operand (input_line_pointer, flags, 32)
-+                        + 1;    // skip trailing zero
- 
+-
++  flags = flag_token = get_operand();
    while (*flags)
      {
-@@ -662,7 +855,7 @@ msp430_profiler (int dummy ATTRIBUTE_UNUSED)
+       switch (*flags)
+@@ -608,6 +780,7 @@ msp430_profiler (int dummy ATTRIBUTE_UNUSED)
+ 	}
+       flags++;
+     }
++  xfree (flag_token);
+ 
+   if (p_flags
+       && (   ! pow2value (p_flags & (  MSP430_PROFILER_FLAG_ENTRY
+@@ -658,11 +831,11 @@ msp430_profiler (int dummy ATTRIBUTE_UNUSED)
+   while (ops--)
+     {
+       /* Now get profiling info.  */
+-      halt = extract_operand (input_line_pointer, str, 1024);
++      char *halt = get_operand();
        /* Process like ".word xxx" directive.  */
-       parse_exp (str, & exp);
+-      parse_exp (str, & exp);
++      parse_exp (halt, & exp);
        emit_expr (& exp, 2);
 -      input_line_pointer = halt;
-+      input_line_pointer = halt + 1;
++      xfree(halt);
      }
  
    /* Fill the rest with zeros.  */
-@@ -765,11 +958,14 @@ md_parse_option (int c, char * arg)
+@@ -675,28 +848,6 @@ msp430_profiler (int dummy ATTRIBUTE_UNUSED)
+   subseg_set (seg, subseg);
+ }
+ 
+-static char *
+-extract_word (char * from, char * to, int limit)
+-{
+-  char *op_end;
+-  int size = 0;
+-
+-  /* Drop leading whitespace.  */
+-  from = skip_space (from);
+-  *to = 0;
+-
+-  /* Find the op code end.  */
+-  for (op_end = from; *op_end != 0 && is_part_of_name (*op_end);)
+-    {
+-      to[size++] = *op_end++;
+-      if (size + 1 >= limit)
+-	break;
+-    }
+-
+-  to[size] = 0;
+-  return op_end;
+-}
+-
+ #define OPTION_MMCU 'm'
+ #define OPTION_RELAX 'Q'
+ #define OPTION_POLYMORPHS 'P'
+@@ -704,12 +855,21 @@ extract_word (char * from, char * to, int limit)
+ static void
+ msp430_set_arch (int dummy ATTRIBUTE_UNUSED)
+ {
+-  char *str = (char *) alloca (32);	/* 32 for good measure.  */
+-
+-  input_line_pointer = extract_word (input_line_pointer, str, 32);
+-
+-  md_parse_option (OPTION_MMCU, str);
+-  bfd_set_arch_mach (stdoutput, TARGET_ARCH, msp430_mcu->mach);
++  SKIP_WHITESPACE();
++  if (!is_end_of_line[(unsigned char) *input_line_pointer])
++    {
++      char* tag_start = input_line_pointer;
++      int ch;
++      
++      while (is_part_of_name (ch = *input_line_pointer++))
++	;
++      *--input_line_pointer = 0;
++      md_parse_option (OPTION_MMCU, tag_start);
++      *input_line_pointer = ch;
++      bfd_set_arch_mach (stdoutput, TARGET_ARCH, msp430_mcu->mach);
++    }
++  else
++    as_bad (_("missing value for arch"));
+ }
+ 
+ static void
+@@ -765,11 +925,14 @@ md_parse_option (int c, char * arg)
    return 0;
  }
  
@@ -1446,7 +1649,7 @@
    {NULL, NULL, 0}
  };
  
-@@ -791,26 +987,68 @@ md_show_usage (FILE * stream)
+@@ -791,26 +954,68 @@ md_show_usage (FILE * stream)
    fprintf (stream,
  	   _("MSP430 options:\n"
  	     "  -mmcu=[msp430-name] select microcontroller type\n"
@@ -1535,7 +1738,31 @@
    fprintf (stream,
  	   _("  -mQ - enable relaxation at assembly time. DANGEROUS!\n"
  	     "  -mP - enable polymorph instructions\n"));
-@@ -850,7 +1088,7 @@ md_atof (int type, char * litP, int * sizeP)
+@@ -824,23 +1029,6 @@ md_undefined_symbol (char * name ATTRIBUTE_UNUSED)
+   return 0;
+ }
+ 
+-static char *
+-extract_cmd (char * from, char * to, int limit)
+-{
+-  int size = 0;
+-
+-  while (*from && ! ISSPACE (*from) && *from != '.' && limit > size)
+-    {
+-      *(to + size) = *from;
+-      from++;
+-      size++;
+-    }
+-
+-  *(to + size) = 0;
+-
+-  return from;
+-}
+-
+ char *
+ md_atof (int type, char * litP, int * sizeP)
+ {
+@@ -850,7 +1038,7 @@ md_atof (int type, char * litP, int * sizeP)
  void
  md_begin (void)
  {
@@ -1544,7 +1771,7 @@
    msp430_hash = hash_new ();
  
    for (opcode = msp430_opcodes; opcode->name; opcode++)
-@@ -880,10 +1118,63 @@ check_reg (char * t)
+@@ -880,13 +1068,69 @@ check_reg (char * t)
    return 0;
  }
  
@@ -1609,7 +1836,13 @@
  {
    char *__tl = l;
  
-@@ -964,79 +1255,11 @@ msp430_srcoperand (struct msp430_operand_s * op,
++  if (! l)
++    l = "";
++  
+   /* Check if an immediate #VALUE.  The hash sign should be only at the beginning!  */
+   if (*l == '#')
+     {
+@@ -964,79 +1208,11 @@ msp430_srcoperand (struct msp430_operand_s * op,
  	      x = op->exp.X_add_number;
  	    }
  
@@ -1692,7 +1925,7 @@
  	}
        else if (op->exp.X_op == O_symbol)
  	{
-@@ -1044,12 +1267,10 @@ msp430_srcoperand (struct msp430_operand_s * op,
+@@ -1044,12 +1220,10 @@ msp430_srcoperand (struct msp430_operand_s * op,
  	}
        else if (op->exp.X_op == O_big)
  	{
@@ -1705,7 +1938,7 @@
  	    }
  	  else
  	    {
-@@ -1058,49 +1279,6 @@ msp430_srcoperand (struct msp430_operand_s * op,
+@@ -1058,49 +1232,6 @@ msp430_srcoperand (struct msp430_operand_s * op,
  		      l);
  	      return 1;
  	    }
@@ -1755,7 +1988,7 @@
  	}
        /* Redundant (yet) check.  */
        else if (op->exp.X_op == O_register)
-@@ -1127,7 +1305,7 @@ msp430_srcoperand (struct msp430_operand_s * op,
+@@ -1127,7 +1258,7 @@ msp430_srcoperand (struct msp430_operand_s * op,
  	{
  	  int x = op->exp.X_add_number;
  
@@ -1764,7 +1997,7 @@
  	    {
  	      as_bad (_("value out of range: %d"), x);
  	      return 1;
-@@ -1262,7 +1440,7 @@ msp430_srcoperand (struct msp430_operand_s * op,
+@@ -1262,7 +1393,7 @@ msp430_srcoperand (struct msp430_operand_s * op,
  	{
  	  int x = op->exp.X_add_number;
  
@@ -1773,7 +2006,7 @@
  	    {
  	      as_bad (_("value out of range: %d"), x);
  	      return 1;
-@@ -1338,10 +1516,10 @@ msp430_srcoperand (struct msp430_operand_s * op,
+@@ -1338,10 +1469,10 @@ msp430_srcoperand (struct msp430_operand_s * op,
  
  
  static int
@@ -1786,14 +2019,14 @@
  
    if (ret)
      return ret;
-@@ -1373,39 +1551,135 @@ msp430_dstoperand (struct msp430_operand_s * op, char * l, int bin)
+@@ -1373,39 +1504,139 @@ msp430_dstoperand (struct msp430_operand_s * op, char * l, int bin)
    return 0;
  }
  
 +static void
 +msp430_repeat_insn (int dummy ATTRIBUTE_UNUSED)
 +{
-+  char operand[MAX_OP_LEN];
++  char *operand = 0;
 +  struct msp430_operand_s op;
 +  int imm_op = 0;
 +  char *line = input_line_pointer;
@@ -1801,7 +2034,7 @@
 +  if (msp430_core(msp430_mcu) < CORE_430X)
 +    {
 +      as_bad (_("Repeatable instructions not allowed with %s mcu"), msp430_mcu->name);
-+      return;
++      goto done;
 +    }
 +
 +  if (msp430x_repeats)
@@ -1810,28 +2043,31 @@
 +  if (!*line || *line == '\n')
 +    {
 +      as_bad (_("rpt pseudo-op requires 1 operand"));
-+      return;
++      goto done;
 +    }
 +
 +  memset (&op, 0, sizeof (op));
-+
-+  input_line_pointer = extract_operand (line, operand, sizeof(operand));
++  operand = get_operand();
 +
 +  if (msp430_srcoperand(&op, operand, &imm_op, 1, 15) != 0)
-+    return;
++    goto done;
 +  
 +  if ( !(op.mode == OP_REG && op.am == 0)   // Rn
 +    && !(op.mode == OP_EXP && op.am == 3)   // #N
 +     )
 +    {
 +      as_bad (_("rpt pseudo-op requires immediate or register operand"));
-+      return;
++      goto done;
 +    }
 +
 +  if (op.am == 0)       // rpt Rn
 +     msp430x_repeats = (((1 << 7) | op.reg) << 1) | 1;          // last bit as .rpt flag
 +  else                  // rpt #N
 +     msp430x_repeats = ((op.exp.X_add_number - 1) << 1) | 1;    // last bit as .rpt flag
++
++ done:
++  if (operand)
++    xfree(operand);
 +}
  
  /* Parse instruction operands.
@@ -1843,9 +2079,11 @@
  {
    int bin = opcode->bin_opcode;	/* Opcode mask.  */
    int __is = 0;
-   char l1[MAX_OP_LEN], l2[MAX_OP_LEN];
+-  char l1[MAX_OP_LEN], l2[MAX_OP_LEN];
 -  char *frag;
 -  int where;
++  char *l1 = 0;
++  char *l2 = 0;
 +  char *frag = 0;
 +  int where = 0;
    struct msp430_operand_s op1, op2;
@@ -1880,11 +2118,8 @@
 +  else if (*line == '.' && TOLOWER (*(line + 1)) == 'a')
 +    {
 +      op_width = ADDR_OP;
-     }
--  else
--    byte_op = 0;
- 
--  /* skip .[bwBW].  */
++    }
++
 +  if ((op_width == WORD_OP && !(opcode_modifier(opcode) & MOD_W))
 +      || (op_width == BYTE_OP && !(opcode_modifier(opcode) & MOD_B))
 +      || (op_width == ADDR_OP && !(opcode_modifier(opcode) & MOD_A))
@@ -1894,8 +2129,11 @@
 +      as_bad (_("%s not allowed with %s instruction"),
 +	      modifier[op_width], opcode->name);
 +      return 0;
-+    }
-+
+     }
+-  else
+-    byte_op = 0;
+ 
+-  /* skip .[bwBW].  */
 +   if ( opcode_format(opcode) ==  FMT_X_DOUBLE_OPERAND 
 +       || opcode_format(opcode) ==  FMT_X_SINGLE_OPERAND  
 +       || opcode_format(opcode) ==  FMT_X_EMULATED 
@@ -1933,7 +2171,16 @@
    while (! ISSPACE (*line) && *line)
      line++;
  
-@@ -1423,22 +1697,22 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+@@ -1416,29 +1647,29 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+       return 0;
+     }
+ 
+-  memset (l1, 0, sizeof (l1));
+-  memset (l2, 0, sizeof (l2));
++  input_line_pointer = line;
++  
+   memset (&op1, 0, sizeof (op1));
+   memset (&op2, 0, sizeof (op2));
  
    imm_op = 0;
  
@@ -1957,13 +2204,14 @@
 -	case 1:
 +	case V_NONE:
  	  /* Something which works with destination operand.  */
- 	  line = extract_operand (line, l1, sizeof (l1));
+-	  line = extract_operand (line, l1, sizeof (l1));
 -	  res = msp430_dstoperand (&op1, l1, opcode->bin_opcode);
++	  l1 = get_operand();
 +	  res = msp430_dstoperand (&op1, l1, -(1<<15), (1<<16) );
  	  if (res)
  	    break;
  
-@@ -1463,14 +1737,15 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+@@ -1463,14 +1694,13 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
  	    }
  	  break;
  
@@ -1971,18 +2219,19 @@
 +	case V_SHIFT:
  	  {
  	    /* Shift instruction.  */
- 	    line = extract_operand (line, l1, sizeof (l1));
- 	    strncpy (l2, l1, sizeof (l2));
- 	    l2[sizeof (l2) - 1] = '\0';
+-	    line = extract_operand (line, l1, sizeof (l1));
+-	    strncpy (l2, l1, sizeof (l2));
+-	    l2[sizeof (l2) - 1] = '\0';
 -	    res = msp430_srcoperand (&op1, l1, opcode->bin_opcode, &imm_op);
 -	    res += msp430_dstoperand (&op2, l2, opcode->bin_opcode);
++	    l1 = get_operand();
 +	    res = msp430_srcoperand (&op1, l1, &imm_op, -(1<<15), (1<<16));
 +            msp430_substitute_CG(&op1, 0);
-+	    res += msp430_dstoperand (&op2, l2, -(1<<15), (1<<16));
++	    res += msp430_dstoperand (&op2, l1, -(1<<15), (1<<16));
  
  	    if (res)
  	      break;	/* An error occurred.  All warnings were done before.  */
-@@ -1498,7 +1773,12 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+@@ -1498,7 +1728,12 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
  
  	    if (op2.mode == OP_EXP)
  	      {
@@ -1996,16 +2245,17 @@
  		bfd_putl16 ((bfd_vma) ZEROS, frag + 2 + ((__is == 3) ? 2 : 0));
  
  		if (op2.reg)	/* Not PC relative.  */
-@@ -1510,16 +1790,21 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+@@ -1510,16 +1745,20 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
  	      }
  	    break;
  	  }
 -	case 3:
 +	case V_BR:
  	  /* Branch instruction => mov dst, r0.  */
- 	  line = extract_operand (line, l1, sizeof (l1));
- 
+-	  line = extract_operand (line, l1, sizeof (l1));
+-
 -	  res = msp430_srcoperand (&op1, l1, opcode->bin_opcode, &imm_op);
++	  l1 = get_operand();
 +	  res = msp430_srcoperand (&op1, l1, &imm_op, -(1<<15), (1<<16));
 +          msp430_substitute_CG(&op1, 0);
  	  if (res)
@@ -2022,23 +2272,25 @@
  
  	  bin |= ((op1.reg << 8) | (op1.am << 4));
  	  __is = 1 + op1.ol;
-@@ -1544,11 +1829,12 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+@@ -1544,11 +1783,12 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
  	}
        break;
  
 -    case 1:			/* Format 1, double operand.  */
-+    case FMT_DOUBLE_OPERAND:		/* Format 1, double operand.  */
-       line = extract_operand (line, l1, sizeof (l1));
-       line = extract_operand (line, l2, sizeof (l2));
+-      line = extract_operand (line, l1, sizeof (l1));
+-      line = extract_operand (line, l2, sizeof (l2));
 -      res = msp430_srcoperand (&op1, l1, opcode->bin_opcode, &imm_op);
 -      res += msp430_dstoperand (&op2, l2, opcode->bin_opcode);
++    case FMT_DOUBLE_OPERAND:		/* Format 1, double operand.  */
++      l1 = get_operand();
++      l2 = get_operand();
 +      res = msp430_srcoperand (&op1, l1, &imm_op, -(1<<15), (1<<16));
 +      msp430_substitute_CG(&op1, 0);
 +      res += msp430_dstoperand (&op2, l2, -(1<<15), (1<<16));
  
        if (res)
  	break;			/* Error occurred.  All warnings were done before.  */
-@@ -1576,7 +1862,12 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+@@ -1576,7 +1816,12 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
  
        if (op2.mode == OP_EXP)
  	{
@@ -2052,7 +2304,7 @@
  	  bfd_putl16 ((bfd_vma) ZEROS, frag + 2 + ((__is == 3) ? 2 : 0));
  
  	  if (op2.reg)		/* Not PC relative.  */
-@@ -1588,8 +1879,8 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+@@ -1588,8 +1833,8 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
  	}
        break;
  
@@ -2063,11 +2315,13 @@
  	{
  	  /* reti instruction.  */
  	  frag = frag_more (2);
-@@ -1599,9 +1890,10 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+@@ -1598,10 +1843,11 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+ 	  break;
  	}
  
-       line = extract_operand (line, l1, sizeof (l1));
+-      line = extract_operand (line, l1, sizeof (l1));
 -      res = msp430_srcoperand (&op1, l1, opcode->bin_opcode, &imm_op);
++      l1 = get_operand();
 +      res = msp430_srcoperand (&op1, l1, &imm_op, -(1<<15), (1<<16));
        if (res)
  	break;		/* Error in operand.  */
@@ -2075,16 +2329,18 @@
  
        bin |= op1.reg | (op1.am << 4);
        __is = 1 + op1.ol;
-@@ -1623,7 +1915,7 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+@@ -1623,8 +1869,8 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
  	}
        break;
  
 -    case 3:			/* Conditional jumps instructions.  */
+-      line = extract_operand (line, l1, sizeof (l1));
 +    case FMT_JUMP:			/* Conditional jumps instructions.  */
-       line = extract_operand (line, l1, sizeof (l1));
++      l1 = get_operand();
        /* l1 is a label.  */
        if (l1[0])
-@@ -1693,11 +1985,13 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+ 	{
+@@ -1693,11 +1939,13 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
  	  else if (*l1 == '$')
  	    {
  	      as_bad (_("instruction requires label sans '$'"));
@@ -2098,7 +2354,7 @@
  	    }
  	  dwarf2_emit_insn (2 * __is);
  	  break;
-@@ -1709,7 +2003,7 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+@@ -1709,14 +1957,14 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
  	}
        break;
  
@@ -2107,7 +2363,15 @@
        if (!msp430_enable_polys)
  	{
  	  as_bad (_("polymorphs are not enabled. Use -mP option to enable."));
-@@ -1730,7 +2024,7 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+ 	  break;
+ 	}
+ 	
+-      line = extract_operand (line, l1, sizeof (l1));
++      l1 = get_operand();
+       if (l1[0])
+ 	{
+ 	  char *m = l1;
+@@ -1730,7 +1978,7 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
  	  if (exp.X_op == O_symbol)
  	    {
  	      /* Relaxation required.  */
@@ -2116,7 +2380,7 @@
  
  	      /* The parameter to dwarf2_emit_insn is actually the offset to the start
  		 of the insn from the fix piece of instruction that was emitted.
-@@ -1751,7 +2045,7 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+@@ -1751,13 +1999,13 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
        as_bad (_("instruction requires label"));
        break;
  
@@ -2125,7 +2389,14 @@
        if (!msp430_enable_polys)
  	{
  	  as_bad (_("polymorphs are not enabled. Use -mP option to enable."));
-@@ -1771,7 +2065,7 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+ 	  break;
+ 	}
+-      line = extract_operand (line, l1, sizeof (l1));
++      l1 = get_operand();
+       if (l1[0])
+ 	{
+ 	  char * m = l1;
+@@ -1771,7 +2019,7 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
  	  if (exp.X_op == O_symbol)
  	    {
  	      /* Relaxation required.  */
@@ -2134,13 +2405,13 @@
  
  	      frag = frag_more (8);
  	      dwarf2_emit_insn (0);
-@@ -1790,18 +2084,680 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
+@@ -1790,42 +2038,716 @@ msp430_operands (struct msp430_opcode_s * opcode, char * line)
        as_bad (_("instruction requires label"));
        break;
  
 +    case FMT_X_DOUBLE_OPERAND:		/* Extended Format 1 ( double operand). */
-+      line = extract_operand (line, l1, sizeof (l1));
-+      line = extract_operand (line, l2, sizeof (l2));
++      l1 = get_operand();
++      l2 = get_operand();
 +      res = msp430_srcoperand (&op1, l1,  &imm_op, -(1<<19), (1<<20));
 +      msp430_substitute_CG(&op1, 0);
 +      res += msp430_dstoperand (&op2, l2, -(1<<19), (1<<20));
@@ -2210,7 +2481,7 @@
 +      break;
 +
 +    case FMT_X_SINGLE_OPERAND:		/* Extended format 2 (single-operand). */
-+      line = extract_operand (line, l1, sizeof (l1));
++      l1 = get_operand();
 +      res = msp430_srcoperand (&op1, l1, &imm_op, -(1<<19), (1<<20));
 +      msp430_substitute_CG(&op1, 0);
 +      if (res)
@@ -2261,7 +2532,7 @@
 +    case FMT_X_EXCEPTION:
 +      /* calla, pushm, popm, rrcm, rrum, rram, rlam */
 +      bin = opcode->bin_opcode;   // remove WB/AL bits
-+      line = extract_operand (line, l1, sizeof (l1));
++      l1 = get_operand();
 +      switch(opcode_variant(opcode))
 +        {
 +        case V_CALLA:   // calla
@@ -2330,7 +2601,7 @@
 +            }
 +          break;
 +        case V_ROTM:   // rxxm
-+          line = extract_operand(line, l2, sizeof(l2));
++	  l2 = get_operand();
 +          res = msp430_srcoperand (&op1, l1, &imm_op, 1, 5);
 +          res += msp430_dstoperand (&op2, l2, -(1<<19), (1<<20));
 +          if(res)
@@ -2360,7 +2631,7 @@
 +          break;
 +        case V_PUSHM:
 +        case V_POPM:
-+          line = extract_operand(line, l2, sizeof(l2));
++	  l2 = get_operand();
 +          res = msp430_srcoperand (&op1, l1, &imm_op, 1, 17);
 +          res += msp430_dstoperand (&op2, l2, -(1<<19), (1<<20));
 +          if(res)
@@ -2403,8 +2674,8 @@
 +      break;
 +    case FMT_X_ADDRESS:
 +    /* mova, adda, suba, cmpa */
-+      line = extract_operand (line, l1, sizeof (l1));
-+      line = extract_operand (line, l2, sizeof (l2));
++      l1 = get_operand();
++      l2 = get_operand();
 +      res = msp430_srcoperand (&op1, l1, &imm_op, -(1<<19), (1<<20));
 +      res += msp430_dstoperand (&op2, l2, -(1<<19), (1<<20));
 +      if (res)
@@ -2565,7 +2836,7 @@
 +	{
 +	case V_NONE:
 +	  /* single operand instruction emulated with Extended type 1 (double operand) instructions.  */
-+	  line = extract_operand (line, l1, sizeof (l1));
++	  l1 = get_operand();
 +	  res = msp430_dstoperand (&op1, l1, -(1<<19), (1<<20) );
 +	  if (res)
 +	    break;
@@ -2613,12 +2884,10 @@
 +	case V_X_SHIFT:
 +	  {
 +	    /* Shift instruction.  */
-+	    line = extract_operand (line, l1, sizeof (l1));
-+	    strncpy (l2, l1, sizeof (l2));
-+	    l2[sizeof (l2) - 1] = '\0';
++	    l1 = get_operand();
 +	    res = msp430_srcoperand (&op1, l1, &imm_op, -(1<<19), (1<<20));
 +            msp430_substitute_CG(&op1, 0);
-+	    res += msp430_dstoperand (&op2, l2, -(1<<19), (1<<20));
++	    res += msp430_dstoperand (&op2, l1, -(1<<19), (1<<20));
 +
 +	    if (res)
 +	      break;	/* An error occurred.  All warnings were done before.  */
@@ -2705,7 +2974,7 @@
 +              break;
 +            }
 +          bin = opcode->bin_opcode;   // remove WB/AL bits
-+          line = extract_operand (line, l1, sizeof (l1));
++	  l1 = get_operand();
 +          res = msp430_dstoperand (&op1, l1, -(1<<19), (1<<20) );
 +	  if (res)
 +	    break;
@@ -2728,7 +2997,7 @@
 +            }
 +
 +          bin = opcode->bin_opcode;   // remove WB/AL bits
-+          line = extract_operand (line, l1, sizeof (l1));
++	  l1 = get_operand();
 +          res = msp430_srcoperand (&op1, l1, &imm_op, -(1<<19), (1<<20));
 +          if (res)
 +	    break;		/* Error in operand.  */
@@ -2805,7 +3074,11 @@
      }
  
 -  input_line_pointer = line;
-+  input_line_pointer = line + 1;        // skip trailing zero
++  if (l1)
++    xfree(l1);
++  if (l2)
++    xfree(l2);
++
    return 0;
  }
  
@@ -2813,33 +3086,61 @@
  md_assemble (char * str)
  {
 -  struct msp430_opcode_s * opcode;
+-  char cmd[32];
+-  unsigned int i = 0;
+-
+-  str = skip_space (str);	/* Skip leading spaces.  */
+-  str = extract_cmd (str, cmd, sizeof (cmd));
+-
+-  while (cmd[i] && i < sizeof (cmd))
+-    {
+-      char a = TOLOWER (cmd[i]);
+-      cmd[i] = a;
+-      i++;
+-    }
+-
+-  if (!cmd[0])
 +  struct msp430_opcode_s const * opcode;
-   char cmd[32];
-   unsigned int i = 0;
- 
-@@ -1821,7 +2777,7 @@ md_assemble (char * str)
++  char* cmda;
++  char* cmd;
++  int i = 0;
++  int cmd_length;
++
++  while (ISSPACE (*str))
++    ++str;
++  cmd = str;
++  while (*str && (! ISSPACE (*str)) && '.' != *str)
++    ++str;
++  cmd_length = str - cmd;
++  if (0 == cmd_length)
+     {
+       as_bad (_("can't find opcode "));
        return;
      }
  
 -  opcode = (struct msp430_opcode_s *) hash_find (msp430_hash, cmd);
-+  opcode = (struct msp430_opcode_s const *) hash_find (msp430_hash, cmd);
++  cmda = alloca(1+cmd_length);
++  do {
++    cmda[i] = TOLOWER(cmd[i]);
++  } while (++i < cmd_length);
++  cmda[i] = 0;
++
++  opcode = (struct msp430_opcode_s const *) hash_find (msp430_hash, cmda);
  
    if (opcode == NULL)
      {
-@@ -1829,6 +2785,12 @@ md_assemble (char * str)
-       return;
-     }
- 
-+  if (msp430_core(msp430_mcu) < CORE_430X && opcode_format(opcode) >= FMT_X)
-+    {
-+      as_bad (_("Extended instruction (%s) not allowed with %s mcu"), opcode->name, msp430_mcu->name);
+-      as_bad (_("unknown opcode `%s'"), cmd);
++      as_bad (_("unknown opcode `%s'"), cmda);
 +      return;
 +    }
 +
-   {
-     char *__t = input_line_pointer;
++  if (msp430_core(msp430_mcu) < CORE_430X && opcode_format(opcode) >= FMT_X)
++    {
++      as_bad (_("Extended instruction (%s) not allowed with %s mcu"), opcode->name, msp430_mcu->name);
+       return;
+     }
  
-@@ -1963,6 +2925,26 @@ md_apply_fix (fixS * fixp, valueT * valuep, segT seg)
+@@ -1963,6 +2885,26 @@ md_apply_fix (fixS * fixp, valueT * valuep, segT seg)
  
        switch (fixp->fx_r_type)
  	{
@@ -2866,7 +3167,7 @@
  	case BFD_RELOC_MSP430_10_PCREL:
  	  if (value & 1)
  	    as_bad_where (fixp->fx_file, fixp->fx_line,
-@@ -1987,7 +2969,7 @@ md_apply_fix (fixS * fixp, valueT * valuep, segT seg)
+@@ -1987,7 +2929,7 @@ md_apply_fix (fixS * fixp, valueT * valuep, segT seg)
  			  _("odd address operand: %ld"), value);
  
  	  /* Nothing to be corrected here.  */
@@ -2875,7 +3176,7 @@
  	    as_bad_where (fixp->fx_file, fixp->fx_line,
  			  _("operand out of range: %ld"), value);
  
-@@ -1997,7 +2979,7 @@ md_apply_fix (fixS * fixp, valueT * valuep, segT seg)
+@@ -1997,7 +2939,7 @@ md_apply_fix (fixS * fixp, valueT * valuep, segT seg)
  
  	case BFD_RELOC_MSP430_16_PCREL_BYTE:
  	  /* Nothing to be corrected here.  */
@@ -2884,7 +3185,7 @@
  	    as_bad_where (fixp->fx_file, fixp->fx_line,
  			  _("operand out of range: %ld"), value);
  
-@@ -2016,6 +2998,76 @@ md_apply_fix (fixS * fixp, valueT * valuep, segT seg)
+@@ -2016,6 +2958,76 @@ md_apply_fix (fixS * fixp, valueT * valuep, segT seg)
  	  bfd_putl16 ((bfd_vma) value, where);
  	  break;
  
@@ -2961,6 +3262,8 @@
  	default:
  	  as_fatal (_("line %d: unknown relocation type: 0x%x"),
  		    fixp->fx_line, fixp->fx_r_type);
+diff --git binutils-2.21.orig/include/elf/msp430.h binutils-2.21/include/elf/msp430.h
+index 44f5c51..b9645a2 100644
 --- binutils-2.21.orig/include/elf/msp430.h
 +++ binutils-2.21/include/elf/msp430.h
 @@ -26,20 +26,31 @@
@@ -3035,6 +3338,8 @@
  
  END_RELOC_NUMBERS (R_MSP430_max)
  
+diff --git binutils-2.21.orig/include/opcode/msp430.h binutils-2.21/include/opcode/msp430.h
+index d3bf130..60ec9d6 100644
 --- binutils-2.21.orig/include/opcode/msp430.h
 +++ binutils-2.21/include/opcode/msp430.h
 @@ -26,7 +26,7 @@ struct msp430_operand_s
@@ -3362,28 +3667,70 @@
    /* End of instruction set.  */
    { NULL, 0, 0, 0, 0 }
  };
+diff --git binutils-2.21.orig/ld/Makefile.am binutils-2.21/ld/Makefile.am
+index b4364be..dac9f20 100644
 --- binutils-2.21.orig/ld/Makefile.am
 +++ binutils-2.21/ld/Makefile.am
-@@ -329,6 +329,9 @@ ALL_EMULATION_SOURCES = \
+@@ -162,6 +162,14 @@ ALL_EMULATION_SOURCES = \
+ 	eavr5.c \
+ 	eavr51.c \
+ 	eavr6.c \
++	ecc430x5125.c \
++	ecc430x5133.c \
++	ecc430x5137.c \
++	ecc430x6125.c \
++	ecc430x6126.c \
++	ecc430x6127.c \
++	ecc430x6135.c \
++	ecc430x6137.c \
+ 	ecoff_i860.c \
+ 	ecoff_sparc.c \
+ 	eelf32_spu.c \
+@@ -312,36 +320,82 @@ ALL_EMULATION_SOURCES = \
+ 	emipslnews.c \
+ 	emipspe.c \
+ 	emsp430x110.c \
+-	emsp430x112.c \
+ 	emsp430x1101.c \
+ 	emsp430x1111.c \
++	emsp430x112.c \
+ 	emsp430x1121.c \
+ 	emsp430x1122.c \
+ 	emsp430x1132.c \
+ 	emsp430x122.c \
+-	emsp430x123.c \
+ 	emsp430x1222.c \
++	emsp430x123.c \
+ 	emsp430x1232.c \
+ 	emsp430x133.c \
+-	emsp430x135.c \
+ 	emsp430x1331.c \
++	emsp430x135.c \
+ 	emsp430x1351.c \
  	emsp430x147.c \
- 	emsp430x148.c \
- 	emsp430x149.c \
 +	emsp430x1471.c \
+ 	emsp430x148.c \
 +	emsp430x1481.c \
+ 	emsp430x149.c \
 +	emsp430x1491.c \
  	emsp430x155.c \
  	emsp430x156.c \
  	emsp430x157.c \
-@@ -338,10 +341,49 @@ ALL_EMULATION_SOURCES = \
+-	emsp430x167.c \
+-	emsp430x168.c \
+-	emsp430x169.c \
  	emsp430x1610.c \
  	emsp430x1611.c \
  	emsp430x1612.c \
++	emsp430x167.c \
++	emsp430x168.c \
++	emsp430x169.c \
 +	emsp430x2001.c \
-+	emsp430x2011.c \
 +	emsp430x2002.c \
-+	emsp430x2012.c \
 +	emsp430x2003.c \
-+	emsp430x2014.c \
++	emsp430x2011.c \
++	emsp430x2012.c \
++	emsp430x2013.c \
  	emsp430x2101.c \
  	emsp430x2111.c \
 +	emsp430x2112.c \
@@ -3402,21 +3749,25 @@
 +	emsp430x2272.c \
 +	emsp430x2274.c \
 +	emsp430x233.c \
-+	emsp430x235.c \
 +	emsp430x2330.c \
++	emsp430x235.c \
 +	emsp430x2350.c \
 +	emsp430x2370.c \
-+	emsp430x247.c \
-+	emsp430x248.c \
-+	emsp430x249.c \
 +	emsp430x2410.c \
-+	emsp430x2471.c \
-+	emsp430x2481.c \
-+	emsp430x2491.c \
++	emsp430x2416.c \
 +	emsp430x2416.c \
 +	emsp430x2417.c \
++	emsp430x2417.c \
++	emsp430x2418.c \
 +	emsp430x2418.c \
 +	emsp430x2419.c \
++	emsp430x2419.c \
++	emsp430x247.c \
++	emsp430x2471.c \
++	emsp430x248.c \
++	emsp430x2481.c \
++	emsp430x249.c \
++	emsp430x2491.c \
 +	emsp430x2616.c \
 +	emsp430x2617.c \
 +	emsp430x2618.c \
@@ -3424,61 +3775,52 @@
  	emsp430x311.c \
  	emsp430x312.c \
  	emsp430x313.c \
-@@ -355,21 +397,96 @@ ALL_EMULATION_SOURCES = \
+@@ -355,21 +409,92 @@ ALL_EMULATION_SOURCES = \
  	emsp430x413.c \
  	emsp430x415.c \
  	emsp430x417.c \
+-	emsp430xE423.c \
+-	emsp430xE425.c \
+-	emsp430xE427.c \
+-	emsp430xW423.c \
+-	emsp430xW425.c \
+-	emsp430xW427.c \
+-	emsp430xG437.c \
+-	emsp430xG438.c \
+-	emsp430xG439.c \
 +	emsp430x423.c \
 +	emsp430x425.c \
-+	emsp430x427.c \
++	emsp430x4250.c \
 +	emsp430x4250.c \
 +	emsp430x4260.c \
++	emsp430x427.c \
 +	emsp430x4270.c \
- 	emsp430xE423.c \
- 	emsp430xE425.c \
- 	emsp430xE427.c \
-+	emsp430xE4232.c \
-+	emsp430xE4242.c \
-+	emsp430xE4252.c \
-+	emsp430xE4272.c \
- 	emsp430xW423.c \
- 	emsp430xW425.c \
- 	emsp430xW427.c \
-+	emsp430xG4250.c \
-+	emsp430xG4260.c \
-+	emsp430xG4270.c \
- 	emsp430xG437.c \
- 	emsp430xG438.c \
- 	emsp430xG439.c \
++	emsp430x4270.c \
  	emsp430x435.c \
- 	emsp430x436.c \
- 	emsp430x437.c \
 +	emsp430x4351.c \
+ 	emsp430x436.c \
 +	emsp430x4361.c \
+ 	emsp430x437.c \
 +	emsp430x4371.c \
  	emsp430x447.c \
  	emsp430x448.c \
  	emsp430x449.c \
-+	emsp430xG4616.c \
-+	emsp430xG4617.c \
-+	emsp430xG4618.c \
-+	emsp430xG4619.c \
++	emsp430x47163.c \
++	emsp430x47166.c \
++	emsp430x47167.c \
++	emsp430x47173.c \
++	emsp430x47176.c \
++	emsp430x47177.c \
++	emsp430x47183.c \
++	emsp430x47186.c \
++	emsp430x47187.c \
++	emsp430x47193.c \
++	emsp430x47196.c \
++	emsp430x47197.c \
 +	emsp430x4783.c \
 +	emsp430x4784.c \
 +	emsp430x4793.c \
 +	emsp430x4794.c \
-+	emsp430x47163.c \
-+	emsp430x47173.c \
-+	emsp430x47183.c \
-+	emsp430x47193.c \
-+	emsp430x47166.c \
-+	emsp430x47176.c \
-+	emsp430x47186.c \
-+	emsp430x47196.c \
-+	emsp430x47167.c \
-+	emsp430x47177.c \
-+	emsp430x47187.c \
-+	emsp430x47197.c \
 +	emsp430x5418.c \
 +	emsp430x5419.c \
 +	emsp430x5435.c \
@@ -3510,29 +3852,150 @@
 +	emsp430x5528.c \
 +	emsp430x5529.c \
 +	emsp430x6638.c \
-+	ecc430x5133.c \
-+	ecc430x5125.c \
-+	ecc430x6125.c \
-+	ecc430x6135.c \
-+	ecc430x6126.c \
-+	ecc430x5137.c \
-+	ecc430x6127.c \
-+	ecc430x6137.c \
++	emsp430xE423.c \
++	emsp430xE4232.c \
++	emsp430xE4242.c \
++	emsp430xE425.c \
++	emsp430xE4252.c \
++	emsp430xE427.c \
++	emsp430xE4272.c \
++	emsp430xG4250.c \
++	emsp430xG4250.c \
++	emsp430xG4260.c \
++	emsp430xG4270.c \
++	emsp430xG4270.c \
++	emsp430xG437.c \
++	emsp430xG438.c \
++	emsp430xG439.c \
++	emsp430xG4616.c \
++	emsp430xG4617.c \
++	emsp430xG4618.c \
++	emsp430xG4619.c \
++	emsp430xW423.c \
++	emsp430xW425.c \
++	emsp430xW427.c \
  	enews.c \
  	ens32knbsd.c \
  	eor32.c \
-@@ -1508,6 +1625,18 @@ emsp430x149.c: $(srcdir)/emulparams/msp430all.sh \
+@@ -760,6 +885,38 @@ eavr6.c: $(srcdir)/emulparams/avr6.sh $(srcdir)/emultempl/avrelf.em \
+   $(ELF_DEPS) $(srcdir)/scripttempl/avr.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} avr6 "$(tdir_avr2)"
++ecc430x5125.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x5125 "$(tdir_cc430x5125)" msp430all
++ecc430x5133.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x5133 "$(tdir_cc430x5133)" msp430all
++ecc430x5137.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x5137 "$(tdir_cc430x5137)" msp430all
++ecc430x6125.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x6125 "$(tdir_cc430x6125)" msp430all
++ecc430x6126.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x6126 "$(tdir_cc430x6126)" msp430all
++ecc430x6127.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x6127 "$(tdir_cc430x6127)" msp430all
++ecc430x6135.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x6135 "$(tdir_cc430x6135)" msp430all
++ecc430x6137.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x6137 "$(tdir_cc430x6137)" msp430all
+ ecoff_i860.c: $(srcdir)/emulparams/coff_i860.sh \
+   $(srcdir)/emultempl/generic.em $(srcdir)/scripttempl/i860coff.sc ${GEN_DEPENDS}
+ 	${GENSCRIPTS} coff_i860 "$(tdir_coff_i860)"
+@@ -1440,10 +1597,6 @@ emsp430x110.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
    ${GEN_DEPENDS}
- 	${GENSCRIPTS} msp430x149 "$(tdir_msp430x149)" msp430all
+ 	${GENSCRIPTS} msp430x110 "$(tdir_msp430x110)" msp430all
+-emsp430x112.c: $(srcdir)/emulparams/msp430all.sh \
+-  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+-  ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x112 "$(tdir_msp430x112)" msp430all
+ emsp430x1101.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+@@ -1452,6 +1605,10 @@ emsp430x1111.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x1111 "$(tdir_msp430x1111)" msp430all
++emsp430x112.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x112 "$(tdir_msp430x112)" msp430all
+ emsp430x1121.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+@@ -1468,14 +1625,14 @@ emsp430x122.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x122 "$(tdir_msp430x122)" msp430all
+-emsp430x123.c: $(srcdir)/emulparams/msp430all.sh \
+-  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+-  ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x123 "$(tdir_msp430x123)" msp430all
+ emsp430x1222.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x1222 "$(tdir_msp430x1222)" msp430all
++emsp430x123.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x123 "$(tdir_msp430x123)" msp430all
+ emsp430x1232.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+@@ -1484,14 +1641,14 @@ emsp430x133.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x133 "$(tdir_msp430x133)" msp430all
+-emsp430x135.c: $(srcdir)/emulparams/msp430all.sh \
+-  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+-  ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x135 "$(tdir_msp430x135)" msp430all
+ emsp430x1331.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x1331 "$(tdir_msp430x1331)" msp430all
++emsp430x135.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x135 "$(tdir_msp430x135)" msp430all
+ emsp430x1351.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+@@ -1500,14 +1657,26 @@ emsp430x147.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x147 "$(tdir_msp430x147)" msp430all
 +emsp430x1471.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x1471 "$(tdir_msp430x1471)" msp430all
+ emsp430x148.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x148 "$(tdir_msp430x148)" msp430all
 +emsp430x1481.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x1481 "$(tdir_msp430x1481)" msp430all
+ emsp430x149.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x149 "$(tdir_msp430x149)" msp430all
 +emsp430x1491.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -3540,30 +4003,55 @@
  emsp430x155.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
    ${GEN_DEPENDS}
-@@ -1544,6 +1673,30 @@ emsp430x1612.c: $(srcdir)/emulparams/msp430all.sh \
+@@ -1520,6 +1689,18 @@ emsp430x157.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
    ${GEN_DEPENDS}
- 	${GENSCRIPTS} msp430x1612 "$(tdir_msp430x1612)" msp430all
-+emsp430x2001.c: $(srcdir)/emulparams/msp430all.sh \
+ 	${GENSCRIPTS} msp430x157 "$(tdir_msp430x157)" msp430all
++emsp430x1610.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x1610 "$(tdir_msp430x1610)" msp430all
++emsp430x1611.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x1611 "$(tdir_msp430x1611)" msp430all
++emsp430x1612.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x1612 "$(tdir_msp430x1612)" msp430all
+ emsp430x167.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+@@ -1532,18 +1713,30 @@ emsp430x169.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x169 "$(tdir_msp430x169)" msp430all
+-emsp430x1610.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430x2001.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x1610 "$(tdir_msp430x1610)" msp430all
+-emsp430x1611.c: $(srcdir)/emulparams/msp430all.sh \
 +	${GENSCRIPTS} msp430x2001 "$(tdir_msp430x2001)" msp430all
++emsp430x2002.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x1611 "$(tdir_msp430x1611)" msp430all
+-emsp430x1612.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430x2002 "$(tdir_msp430x2002)" msp430all
++emsp430x2003.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x1612 "$(tdir_msp430x1612)" msp430all
++	${GENSCRIPTS} msp430x2003 "$(tdir_msp430x2003)" msp430all
 +emsp430x2011.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2011 "$(tdir_msp430x2011)" msp430all
-+emsp430x2002.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x2002 "$(tdir_msp430x2002)" msp430all
 +emsp430x2012.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2012 "$(tdir_msp430x2012)" msp430all
-+emsp430x2003.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x2003 "$(tdir_msp430x2003)" msp430all
 +emsp430x2013.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -3571,7 +4059,7 @@
  emsp430x2101.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
    ${GEN_DEPENDS}
-@@ -1552,14 +1705,146 @@ emsp430x2111.c: $(srcdir)/emulparams/msp430all.sh \
+@@ -1552,14 +1745,162 @@ emsp430x2111.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
    ${GEN_DEPENDS}
  	${GENSCRIPTS} msp430x2111 "$(tdir_msp430x2111)" msp430all
@@ -3639,14 +4127,14 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x233 "$(tdir_msp430x233)" msp430all
-+emsp430x235.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x235 "$(tdir_msp430x235)" msp430all
 +emsp430x2330.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2330 "$(tdir_msp430x2330)" msp430all
++emsp430x235.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x235 "$(tdir_msp430x235)" msp430all
 +emsp430x2350.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -3655,34 +4143,14 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2370 "$(tdir_msp430x2370)" msp430all
-+emsp430x247.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x247 "$(tdir_msp430x247)" msp430all
-+emsp430x248.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x248 "$(tdir_msp430x248)" msp430all
-+emsp430x249.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x249 "$(tdir_msp430x249)" msp430all
 +emsp430x2410.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2410 "$(tdir_msp430x2410)" msp430all
-+emsp430x2471.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430x2416.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x2471 "$(tdir_msp430x2471)" msp430all
-+emsp430x2481.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x2481 "$(tdir_msp430x2481)" msp430all
-+emsp430x2491.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x2491 "$(tdir_msp430x2491)" msp430all
++	${GENSCRIPTS} msp430x2416 "$(tdir_msp430x2416)" msp430all
 +emsp430x2416.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -3691,6 +4159,14 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2417 "$(tdir_msp430x2417)" msp430all
++emsp430x2417.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x2417 "$(tdir_msp430x2417)" msp430all
++emsp430x2418.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x2418 "$(tdir_msp430x2418)" msp430all
 +emsp430x2418.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -3699,6 +4175,34 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2419 "$(tdir_msp430x2419)" msp430all
++emsp430x2419.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x2419 "$(tdir_msp430x2419)" msp430all
++emsp430x247.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x247 "$(tdir_msp430x247)" msp430all
++emsp430x2471.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x2471 "$(tdir_msp430x2471)" msp430all
++emsp430x248.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x248 "$(tdir_msp430x248)" msp430all
++emsp430x2481.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x2481 "$(tdir_msp430x2481)" msp430all
++emsp430x249.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x249 "$(tdir_msp430x249)" msp430all
++emsp430x2491.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x2491 "$(tdir_msp430x2491)" msp430all
 +emsp430x2616.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -3718,7 +4222,7 @@
  emsp430x311.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430_3.sc \
    ${GEN_DEPENDS}
-@@ -1612,6 +1897,46 @@ emsp430x417.c: $(srcdir)/emulparams/msp430all.sh \
+@@ -1612,30 +1953,310 @@ emsp430x417.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
    ${GEN_DEPENDS}
  	${GENSCRIPTS} msp430x417 "$(tdir_msp430x417)" msp430all
@@ -3730,10 +4234,10 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x425 "$(tdir_msp430x425)" msp430all
-+emsp430x427.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430x4250.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x427 "$(tdir_msp430x427)" msp430all
++	${GENSCRIPTS} msp430x4250 "$(tdir_msp430x4250)" msp430all
 +emsp430x4250.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -3742,87 +4246,102 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x4260 "$(tdir_msp430x4260)" msp430all
++emsp430x427.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x427 "$(tdir_msp430x427)" msp430all
 +emsp430x4270.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x4270 "$(tdir_msp430x4270)" msp430all
-+emsp430xE4232.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430x4270.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xE4232 "$(tdir_msp430xE4232)" msp430all
-+emsp430xE4242.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430x4270 "$(tdir_msp430x4270)" msp430all
++emsp430x435.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xE4242 "$(tdir_msp430xE4242)" msp430all
-+emsp430xE4252.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xE4252 "$(tdir_msp430xE4252)" msp430all
-+emsp430xE4272.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xE4272 "$(tdir_msp430xE4272)" msp430all
- emsp430xE423.c: $(srcdir)/emulparams/msp430all.sh \
-   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-   ${GEN_DEPENDS}
-@@ -1636,6 +1961,18 @@ emsp430xW427.c: $(srcdir)/emulparams/msp430all.sh \
-   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-   ${GEN_DEPENDS}
- 	${GENSCRIPTS} msp430xW427 "$(tdir_msp430xW427)" msp430all
-+emsp430xG4250.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4250 "$(tdir_msp430xG4250)" msp430all
-+emsp430xG4260.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4260 "$(tdir_msp430xG4260)" msp430all
-+emsp430xG4270.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4270 "$(tdir_msp430xG4270)" msp430all
- emsp430xG437.c: $(srcdir)/emulparams/msp430all.sh \
-   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-   ${GEN_DEPENDS}
-@@ -1660,6 +1997,18 @@ emsp430x437.c: $(srcdir)/emulparams/msp430all.sh \
-   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-   ${GEN_DEPENDS}
- 	${GENSCRIPTS} msp430x437 "$(tdir_msp430x437)" msp430all
++	${GENSCRIPTS} msp430x435 "$(tdir_msp430x435)" msp430all
 +emsp430x4351.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x4351 "$(tdir_msp430x4351)" msp430all
++emsp430x436.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x436 "$(tdir_msp430x436)" msp430all
 +emsp430x4361.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x4361 "$(tdir_msp430x4361)" msp430all
++emsp430x437.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x437 "$(tdir_msp430x437)" msp430all
 +emsp430x4371.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x4371 "$(tdir_msp430x4371)" msp430all
- emsp430x447.c: $(srcdir)/emulparams/msp430all.sh \
-   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-   ${GEN_DEPENDS}
-@@ -1672,6 +2021,242 @@ emsp430x449.c: $(srcdir)/emulparams/msp430all.sh \
-   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-   ${GEN_DEPENDS}
- 	${GENSCRIPTS} msp430x449 "$(tdir_msp430x449)" msp430all
-+emsp430xG4616.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430x447.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4616 "$(tdir_msp430xG4616)" msp430all
-+emsp430xG4617.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430x447 "$(tdir_msp430x447)" msp430all
++emsp430x448.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4617 "$(tdir_msp430xG4617)" msp430all
-+emsp430xG4618.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430x448 "$(tdir_msp430x448)" msp430all
++emsp430x449.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4618 "$(tdir_msp430xG4618)" msp430all
-+emsp430xG4619.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430x449 "$(tdir_msp430x449)" msp430all
++emsp430x47163.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4619 "$(tdir_msp430xG4619)" msp430all
++	${GENSCRIPTS} msp430x47163 "$(tdir_msp430x47163)" msp430all
++emsp430x47166.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47166 "$(tdir_msp430x47166)" msp430all
++emsp430x47167.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47167 "$(tdir_msp430x47167)" msp430all
++emsp430x47173.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47173 "$(tdir_msp430x47173)" msp430all
++emsp430x47176.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47176 "$(tdir_msp430x47176)" msp430all
++emsp430x47177.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47177 "$(tdir_msp430x47177)" msp430all
++emsp430x47183.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47183 "$(tdir_msp430x47183)" msp430all
++emsp430x47186.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47186 "$(tdir_msp430x47186)" msp430all
++emsp430x47187.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47187 "$(tdir_msp430x47187)" msp430all
++emsp430x47193.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47193 "$(tdir_msp430x47193)" msp430all
++emsp430x47196.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47196 "$(tdir_msp430x47196)" msp430all
++emsp430x47197.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47197 "$(tdir_msp430x47197)" msp430all
 +emsp430x4783.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -3839,54 +4358,6 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x4794 "$(tdir_msp430x4794)" msp430all
-+emsp430x47163.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47163 "$(tdir_msp430x47163)" msp430all
-+emsp430x47173.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47173 "$(tdir_msp430x47173)" msp430all
-+emsp430x47183.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47183 "$(tdir_msp430x47183)" msp430all
-+emsp430x47193.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47193 "$(tdir_msp430x47193)" msp430all
-+emsp430x47166.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47166 "$(tdir_msp430x47166)" msp430all
-+emsp430x47176.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47176 "$(tdir_msp430x47176)" msp430all
-+emsp430x47186.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47186 "$(tdir_msp430x47186)" msp430all
-+emsp430x47196.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47196 "$(tdir_msp430x47196)" msp430all
-+emsp430x47167.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47167 "$(tdir_msp430x47167)" msp430all
-+emsp430x47177.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47177 "$(tdir_msp430x47177)" msp430all
-+emsp430x47187.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47187 "$(tdir_msp430x47187)" msp430all
-+emsp430x47197.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47197 "$(tdir_msp430x47197)" msp430all
 +emsp430x5418.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -4011,63 +4482,174 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x6638 "$(tdir_msp430x6638)" msp430all
-+ecc430x5133.c: $(srcdir)/emulparams/msp430all.sh \
+ emsp430xE423.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430xE423 "$(tdir_msp430xE423)" msp430all
++emsp430xE4232.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x5133 "$(tdir_cc430x5133)" msp430all
-+ecc430x5125.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xE4232 "$(tdir_msp430xE4232)" msp430all
++emsp430xE4242.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x5125 "$(tdir_cc430x5125)" msp430all
-+ecc430x6125.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xE4242 "$(tdir_msp430xE4242)" msp430all
+ emsp430xE425.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430xE425 "$(tdir_msp430xE425)" msp430all
++emsp430xE4252.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x6125 "$(tdir_cc430x6125)" msp430all
-+ecc430x6135.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xE4252 "$(tdir_msp430xE4252)" msp430all
+ emsp430xE427.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430xE427 "$(tdir_msp430xE427)" msp430all
+-emsp430xW423.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430xE4272.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430xW423 "$(tdir_msp430xW423)" msp430all
+-emsp430xW425.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xE4272 "$(tdir_msp430xE4272)" msp430all
++emsp430xG4250.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430xW425 "$(tdir_msp430xW425)" msp430all
+-emsp430xW427.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4250 "$(tdir_msp430xG4250)" msp430all
++emsp430xG4250.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430xW427 "$(tdir_msp430xW427)" msp430all
++	${GENSCRIPTS} msp430xG4250 "$(tdir_msp430xG4250)" msp430all
++emsp430xG4260.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x6135 "$(tdir_cc430x6135)" msp430all
-+ecc430x6126.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4260 "$(tdir_msp430xG4260)" msp430all
++emsp430xG4270.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x6126 "$(tdir_cc430x6126)" msp430all
-+ecc430x5137.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4270 "$(tdir_msp430xG4270)" msp430all
++emsp430xG4270.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x5137 "$(tdir_cc430x5137)" msp430all
-+ecc430x6127.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4270 "$(tdir_msp430xG4270)" msp430all
+ emsp430xG437.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+@@ -1648,30 +2269,34 @@ emsp430xG439.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430xG439 "$(tdir_msp430xG439)" msp430all
+-emsp430x435.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430xG4616.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x435 "$(tdir_msp430x435)" msp430all
+-emsp430x436.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4616 "$(tdir_msp430xG4616)" msp430all
++emsp430xG4617.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x436 "$(tdir_msp430x436)" msp430all
+-emsp430x437.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4617 "$(tdir_msp430xG4617)" msp430all
++emsp430xG4618.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x437 "$(tdir_msp430x437)" msp430all
+-emsp430x447.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4618 "$(tdir_msp430xG4618)" msp430all
++emsp430xG4619.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x447 "$(tdir_msp430x447)" msp430all
+-emsp430x448.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4619 "$(tdir_msp430xG4619)" msp430all
++emsp430xW423.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x448 "$(tdir_msp430x448)" msp430all
+-emsp430x449.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xW423 "$(tdir_msp430xW423)" msp430all
++emsp430xW425.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x449 "$(tdir_msp430x449)" msp430all
++	${GENSCRIPTS} msp430xW425 "$(tdir_msp430xW425)" msp430all
++emsp430xW427.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x6127 "$(tdir_cc430x6127)" msp430all
-+ecc430x6137.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x6137 "$(tdir_cc430x6137)" msp430all
++	${GENSCRIPTS} msp430xW427 "$(tdir_msp430xW427)" msp430all
  enews.c: $(srcdir)/emulparams/news.sh \
    $(srcdir)/emultempl/generic.em $(srcdir)/scripttempl/aout.sc ${GEN_DEPENDS}
  	${GENSCRIPTS} news "$(tdir_news)"
+diff --git binutils-2.21.orig/ld/Makefile.in binutils-2.21/ld/Makefile.in
+index dac81b3..667da1e 100644
 --- binutils-2.21.orig/ld/Makefile.in
 +++ binutils-2.21/ld/Makefile.in
-@@ -629,6 +629,9 @@ ALL_EMULATION_SOURCES = \
+@@ -462,6 +462,14 @@ ALL_EMULATION_SOURCES = \
+ 	eavr5.c \
+ 	eavr51.c \
+ 	eavr6.c \
++	ecc430x5125.c \
++	ecc430x5133.c \
++	ecc430x5137.c \
++	ecc430x6125.c \
++	ecc430x6126.c \
++	ecc430x6127.c \
++	ecc430x6135.c \
++	ecc430x6137.c \
+ 	ecoff_i860.c \
+ 	ecoff_sparc.c \
+ 	eelf32_spu.c \
+@@ -612,36 +620,82 @@ ALL_EMULATION_SOURCES = \
+ 	emipslnews.c \
+ 	emipspe.c \
+ 	emsp430x110.c \
+-	emsp430x112.c \
+ 	emsp430x1101.c \
+ 	emsp430x1111.c \
++	emsp430x112.c \
+ 	emsp430x1121.c \
+ 	emsp430x1122.c \
+ 	emsp430x1132.c \
+ 	emsp430x122.c \
+-	emsp430x123.c \
+ 	emsp430x1222.c \
++	emsp430x123.c \
+ 	emsp430x1232.c \
+ 	emsp430x133.c \
+-	emsp430x135.c \
+ 	emsp430x1331.c \
++	emsp430x135.c \
+ 	emsp430x1351.c \
  	emsp430x147.c \
- 	emsp430x148.c \
- 	emsp430x149.c \
 +	emsp430x1471.c \
+ 	emsp430x148.c \
 +	emsp430x1481.c \
+ 	emsp430x149.c \
 +	emsp430x1491.c \
  	emsp430x155.c \
  	emsp430x156.c \
  	emsp430x157.c \
-@@ -638,10 +641,49 @@ ALL_EMULATION_SOURCES = \
+-	emsp430x167.c \
+-	emsp430x168.c \
+-	emsp430x169.c \
  	emsp430x1610.c \
  	emsp430x1611.c \
  	emsp430x1612.c \
++	emsp430x167.c \
++	emsp430x168.c \
++	emsp430x169.c \
 +	emsp430x2001.c \
-+	emsp430x2011.c \
 +	emsp430x2002.c \
-+	emsp430x2012.c \
 +	emsp430x2003.c \
-+	emsp430x2014.c \
++	emsp430x2011.c \
++	emsp430x2012.c \
++	emsp430x2013.c \
  	emsp430x2101.c \
  	emsp430x2111.c \
 +	emsp430x2112.c \
@@ -4086,21 +4668,25 @@
 +	emsp430x2272.c \
 +	emsp430x2274.c \
 +	emsp430x233.c \
-+	emsp430x235.c \
 +	emsp430x2330.c \
++	emsp430x235.c \
 +	emsp430x2350.c \
 +	emsp430x2370.c \
-+	emsp430x247.c \
-+	emsp430x248.c \
-+	emsp430x249.c \
 +	emsp430x2410.c \
-+	emsp430x2471.c \
-+	emsp430x2481.c \
-+	emsp430x2491.c \
++	emsp430x2416.c \
 +	emsp430x2416.c \
 +	emsp430x2417.c \
++	emsp430x2417.c \
++	emsp430x2418.c \
 +	emsp430x2418.c \
 +	emsp430x2419.c \
++	emsp430x2419.c \
++	emsp430x247.c \
++	emsp430x2471.c \
++	emsp430x248.c \
++	emsp430x2481.c \
++	emsp430x249.c \
++	emsp430x2491.c \
 +	emsp430x2616.c \
 +	emsp430x2617.c \
 +	emsp430x2618.c \
@@ -4108,61 +4694,52 @@
  	emsp430x311.c \
  	emsp430x312.c \
  	emsp430x313.c \
-@@ -655,21 +697,96 @@ ALL_EMULATION_SOURCES = \
+@@ -655,21 +709,92 @@ ALL_EMULATION_SOURCES = \
  	emsp430x413.c \
  	emsp430x415.c \
  	emsp430x417.c \
+-	emsp430xE423.c \
+-	emsp430xE425.c \
+-	emsp430xE427.c \
+-	emsp430xW423.c \
+-	emsp430xW425.c \
+-	emsp430xW427.c \
+-	emsp430xG437.c \
+-	emsp430xG438.c \
+-	emsp430xG439.c \
 +	emsp430x423.c \
 +	emsp430x425.c \
-+	emsp430x427.c \
++	emsp430x4250.c \
 +	emsp430x4250.c \
 +	emsp430x4260.c \
++	emsp430x427.c \
 +	emsp430x4270.c \
- 	emsp430xE423.c \
- 	emsp430xE425.c \
- 	emsp430xE427.c \
-+	emsp430xE4232.c \
-+	emsp430xE4242.c \
-+	emsp430xE4252.c \
-+	emsp430xE4272.c \
- 	emsp430xW423.c \
- 	emsp430xW425.c \
- 	emsp430xW427.c \
-+	emsp430xG4250.c \
-+	emsp430xG4260.c \
-+	emsp430xG4270.c \
- 	emsp430xG437.c \
- 	emsp430xG438.c \
- 	emsp430xG439.c \
++	emsp430x4270.c \
  	emsp430x435.c \
- 	emsp430x436.c \
- 	emsp430x437.c \
 +	emsp430x4351.c \
+ 	emsp430x436.c \
 +	emsp430x4361.c \
+ 	emsp430x437.c \
 +	emsp430x4371.c \
  	emsp430x447.c \
  	emsp430x448.c \
  	emsp430x449.c \
-+	emsp430xG4616.c \
-+	emsp430xG4617.c \
-+	emsp430xG4618.c \
-+	emsp430xG4619.c \
++	emsp430x47163.c \
++	emsp430x47166.c \
++	emsp430x47167.c \
++	emsp430x47173.c \
++	emsp430x47176.c \
++	emsp430x47177.c \
++	emsp430x47183.c \
++	emsp430x47186.c \
++	emsp430x47187.c \
++	emsp430x47193.c \
++	emsp430x47196.c \
++	emsp430x47197.c \
 +	emsp430x4783.c \
 +	emsp430x4784.c \
 +	emsp430x4793.c \
 +	emsp430x4794.c \
-+	emsp430x47163.c \
-+	emsp430x47173.c \
-+	emsp430x47183.c \
-+	emsp430x47193.c \
-+	emsp430x47166.c \
-+	emsp430x47176.c \
-+	emsp430x47186.c \
-+	emsp430x47196.c \
-+	emsp430x47167.c \
-+	emsp430x47177.c \
-+	emsp430x47187.c \
-+	emsp430x47197.c \
 +	emsp430x5418.c \
 +	emsp430x5419.c \
 +	emsp430x5435.c \
@@ -4194,18 +4771,32 @@
 +	emsp430x5528.c \
 +	emsp430x5529.c \
 +	emsp430x6638.c \
-+	ecc430x5133.c \
-+	ecc430x5125.c \
-+	ecc430x6125.c \
-+	ecc430x6135.c \
-+	ecc430x6126.c \
-+	ecc430x5137.c \
-+	ecc430x6127.c \
-+	ecc430x6137.c \
++	emsp430xE423.c \
++	emsp430xE4232.c \
++	emsp430xE4242.c \
++	emsp430xE425.c \
++	emsp430xE4252.c \
++	emsp430xE427.c \
++	emsp430xE4272.c \
++	emsp430xG4250.c \
++	emsp430xG4250.c \
++	emsp430xG4260.c \
++	emsp430xG4270.c \
++	emsp430xG4270.c \
++	emsp430xG437.c \
++	emsp430xG438.c \
++	emsp430xG439.c \
++	emsp430xG4616.c \
++	emsp430xG4617.c \
++	emsp430xG4618.c \
++	emsp430xG4619.c \
++	emsp430xW423.c \
++	emsp430xW425.c \
++	emsp430xW427.c \
  	enews.c \
  	ens32knbsd.c \
  	eor32.c \
-@@ -1037,6 +1154,14 @@ distclean-compile:
+@@ -1037,6 +1162,14 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eavr5.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eavr51.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eavr6.Po@am__quote@
@@ -4220,7 +4811,7 @@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ecoff_i860.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ecoff_sparc.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ecrisaout.Po@am__quote@
-@@ -1227,8 +1352,11 @@ distclean-compile:
+@@ -1227,8 +1360,11 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x135.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x1351.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x147.Po@am__quote@
@@ -4232,7 +4823,7 @@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x155.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x156.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x157.Po@am__quote@
-@@ -1238,10 +1366,49 @@ distclean-compile:
+@@ -1238,10 +1374,49 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x167.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x168.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x169.Po@am__quote@
@@ -4241,7 +4832,7 @@
 +@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x2003.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x2011.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x2012.Po@am__quote@
-+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x2014.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x2013.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x2101.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x2111.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x2112.Po@am__quote@
@@ -4282,7 +4873,7 @@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x311.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x312.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x313.Po@am__quote@
-@@ -1255,18 +1422,85 @@ distclean-compile:
+@@ -1255,18 +1430,85 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x413.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x415.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430x417.Po@am__quote@
@@ -4368,18 +4959,125 @@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430xW423.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430xW425.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emsp430xW427.Po@am__quote@
-@@ -2931,6 +3165,18 @@ emsp430x149.c: $(srcdir)/emulparams/msp430all.sh \
+@@ -2183,6 +2425,38 @@ eavr6.c: $(srcdir)/emulparams/avr6.sh $(srcdir)/emultempl/avrelf.em \
+   $(ELF_DEPS) $(srcdir)/scripttempl/avr.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} avr6 "$(tdir_avr2)"
++ecc430x5125.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x5125 "$(tdir_cc430x5125)" msp430all
++ecc430x5133.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x5133 "$(tdir_cc430x5133)" msp430all
++ecc430x5137.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x5137 "$(tdir_cc430x5137)" msp430all
++ecc430x6125.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x6125 "$(tdir_cc430x6125)" msp430all
++ecc430x6126.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x6126 "$(tdir_cc430x6126)" msp430all
++ecc430x6127.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x6127 "$(tdir_cc430x6127)" msp430all
++ecc430x6135.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x6135 "$(tdir_cc430x6135)" msp430all
++ecc430x6137.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} cc430x6137 "$(tdir_cc430x6137)" msp430all
+ ecoff_i860.c: $(srcdir)/emulparams/coff_i860.sh \
+   $(srcdir)/emultempl/generic.em $(srcdir)/scripttempl/i860coff.sc ${GEN_DEPENDS}
+ 	${GENSCRIPTS} coff_i860 "$(tdir_coff_i860)"
+@@ -2863,10 +3137,6 @@ emsp430x110.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
    ${GEN_DEPENDS}
- 	${GENSCRIPTS} msp430x149 "$(tdir_msp430x149)" msp430all
+ 	${GENSCRIPTS} msp430x110 "$(tdir_msp430x110)" msp430all
+-emsp430x112.c: $(srcdir)/emulparams/msp430all.sh \
+-  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+-  ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x112 "$(tdir_msp430x112)" msp430all
+ emsp430x1101.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+@@ -2875,6 +3145,10 @@ emsp430x1111.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x1111 "$(tdir_msp430x1111)" msp430all
++emsp430x112.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x112 "$(tdir_msp430x112)" msp430all
+ emsp430x1121.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+@@ -2891,14 +3165,14 @@ emsp430x122.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x122 "$(tdir_msp430x122)" msp430all
+-emsp430x123.c: $(srcdir)/emulparams/msp430all.sh \
+-  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+-  ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x123 "$(tdir_msp430x123)" msp430all
+ emsp430x1222.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x1222 "$(tdir_msp430x1222)" msp430all
++emsp430x123.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x123 "$(tdir_msp430x123)" msp430all
+ emsp430x1232.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+@@ -2907,14 +3181,14 @@ emsp430x133.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x133 "$(tdir_msp430x133)" msp430all
+-emsp430x135.c: $(srcdir)/emulparams/msp430all.sh \
+-  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+-  ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x135 "$(tdir_msp430x135)" msp430all
+ emsp430x1331.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x1331 "$(tdir_msp430x1331)" msp430all
++emsp430x135.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x135 "$(tdir_msp430x135)" msp430all
+ emsp430x1351.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+@@ -2923,14 +3197,26 @@ emsp430x147.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x147 "$(tdir_msp430x147)" msp430all
 +emsp430x1471.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x1471 "$(tdir_msp430x1471)" msp430all
+ emsp430x148.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x148 "$(tdir_msp430x148)" msp430all
 +emsp430x1481.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x1481 "$(tdir_msp430x1481)" msp430all
+ emsp430x149.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x149 "$(tdir_msp430x149)" msp430all
 +emsp430x1491.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -4387,30 +5085,55 @@
  emsp430x155.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
    ${GEN_DEPENDS}
-@@ -2967,6 +3213,30 @@ emsp430x1612.c: $(srcdir)/emulparams/msp430all.sh \
+@@ -2943,6 +3229,18 @@ emsp430x157.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
    ${GEN_DEPENDS}
- 	${GENSCRIPTS} msp430x1612 "$(tdir_msp430x1612)" msp430all
-+emsp430x2001.c: $(srcdir)/emulparams/msp430all.sh \
+ 	${GENSCRIPTS} msp430x157 "$(tdir_msp430x157)" msp430all
++emsp430x1610.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x1610 "$(tdir_msp430x1610)" msp430all
++emsp430x1611.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x1611 "$(tdir_msp430x1611)" msp430all
++emsp430x1612.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x1612 "$(tdir_msp430x1612)" msp430all
+ emsp430x167.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+@@ -2955,18 +3253,30 @@ emsp430x169.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430x169 "$(tdir_msp430x169)" msp430all
+-emsp430x1610.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430x2001.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x1610 "$(tdir_msp430x1610)" msp430all
+-emsp430x1611.c: $(srcdir)/emulparams/msp430all.sh \
 +	${GENSCRIPTS} msp430x2001 "$(tdir_msp430x2001)" msp430all
++emsp430x2002.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x1611 "$(tdir_msp430x1611)" msp430all
+-emsp430x1612.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430x2002 "$(tdir_msp430x2002)" msp430all
++emsp430x2003.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x1612 "$(tdir_msp430x1612)" msp430all
++	${GENSCRIPTS} msp430x2003 "$(tdir_msp430x2003)" msp430all
 +emsp430x2011.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2011 "$(tdir_msp430x2011)" msp430all
-+emsp430x2002.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x2002 "$(tdir_msp430x2002)" msp430all
 +emsp430x2012.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2012 "$(tdir_msp430x2012)" msp430all
-+emsp430x2003.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x2003 "$(tdir_msp430x2003)" msp430all
 +emsp430x2013.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -4418,7 +5141,7 @@
  emsp430x2101.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
    ${GEN_DEPENDS}
-@@ -2975,14 +3245,146 @@ emsp430x2111.c: $(srcdir)/emulparams/msp430all.sh \
+@@ -2975,14 +3285,162 @@ emsp430x2111.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
    ${GEN_DEPENDS}
  	${GENSCRIPTS} msp430x2111 "$(tdir_msp430x2111)" msp430all
@@ -4486,14 +5209,14 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x233 "$(tdir_msp430x233)" msp430all
-+emsp430x235.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x235 "$(tdir_msp430x235)" msp430all
 +emsp430x2330.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2330 "$(tdir_msp430x2330)" msp430all
++emsp430x235.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x235 "$(tdir_msp430x235)" msp430all
 +emsp430x2350.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -4502,34 +5225,14 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2370 "$(tdir_msp430x2370)" msp430all
-+emsp430x247.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x247 "$(tdir_msp430x247)" msp430all
-+emsp430x248.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x248 "$(tdir_msp430x248)" msp430all
-+emsp430x249.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x249 "$(tdir_msp430x249)" msp430all
 +emsp430x2410.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2410 "$(tdir_msp430x2410)" msp430all
-+emsp430x2471.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430x2416.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x2471 "$(tdir_msp430x2471)" msp430all
-+emsp430x2481.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x2481 "$(tdir_msp430x2481)" msp430all
-+emsp430x2491.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x2491 "$(tdir_msp430x2491)" msp430all
++	${GENSCRIPTS} msp430x2416 "$(tdir_msp430x2416)" msp430all
 +emsp430x2416.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -4538,6 +5241,14 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2417 "$(tdir_msp430x2417)" msp430all
++emsp430x2417.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x2417 "$(tdir_msp430x2417)" msp430all
++emsp430x2418.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x2418 "$(tdir_msp430x2418)" msp430all
 +emsp430x2418.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -4546,6 +5257,34 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x2419 "$(tdir_msp430x2419)" msp430all
++emsp430x2419.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x2419 "$(tdir_msp430x2419)" msp430all
++emsp430x247.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x247 "$(tdir_msp430x247)" msp430all
++emsp430x2471.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x2471 "$(tdir_msp430x2471)" msp430all
++emsp430x248.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x248 "$(tdir_msp430x248)" msp430all
++emsp430x2481.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x2481 "$(tdir_msp430x2481)" msp430all
++emsp430x249.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x249 "$(tdir_msp430x249)" msp430all
++emsp430x2491.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x2491 "$(tdir_msp430x2491)" msp430all
 +emsp430x2616.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -4565,7 +5304,7 @@
  emsp430x311.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430_3.sc \
    ${GEN_DEPENDS}
-@@ -3035,6 +3437,46 @@ emsp430x417.c: $(srcdir)/emulparams/msp430all.sh \
+@@ -3035,30 +3493,310 @@ emsp430x417.c: $(srcdir)/emulparams/msp430all.sh \
    $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
    ${GEN_DEPENDS}
  	${GENSCRIPTS} msp430x417 "$(tdir_msp430x417)" msp430all
@@ -4577,10 +5316,10 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x425 "$(tdir_msp430x425)" msp430all
-+emsp430x427.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430x4250.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x427 "$(tdir_msp430x427)" msp430all
++	${GENSCRIPTS} msp430x4250 "$(tdir_msp430x4250)" msp430all
 +emsp430x4250.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -4589,87 +5328,102 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x4260 "$(tdir_msp430x4260)" msp430all
++emsp430x427.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x427 "$(tdir_msp430x427)" msp430all
 +emsp430x4270.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x4270 "$(tdir_msp430x4270)" msp430all
-+emsp430xE4232.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430x4270.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xE4232 "$(tdir_msp430xE4232)" msp430all
-+emsp430xE4242.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430x4270 "$(tdir_msp430x4270)" msp430all
++emsp430x435.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xE4242 "$(tdir_msp430xE4242)" msp430all
-+emsp430xE4252.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xE4252 "$(tdir_msp430xE4252)" msp430all
-+emsp430xE4272.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xE4272 "$(tdir_msp430xE4272)" msp430all
- emsp430xE423.c: $(srcdir)/emulparams/msp430all.sh \
-   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-   ${GEN_DEPENDS}
-@@ -3059,6 +3501,18 @@ emsp430xW427.c: $(srcdir)/emulparams/msp430all.sh \
-   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-   ${GEN_DEPENDS}
- 	${GENSCRIPTS} msp430xW427 "$(tdir_msp430xW427)" msp430all
-+emsp430xG4250.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4250 "$(tdir_msp430xG4250)" msp430all
-+emsp430xG4260.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4260 "$(tdir_msp430xG4260)" msp430all
-+emsp430xG4270.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4270 "$(tdir_msp430xG4270)" msp430all
- emsp430xG437.c: $(srcdir)/emulparams/msp430all.sh \
-   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-   ${GEN_DEPENDS}
-@@ -3083,6 +3537,18 @@ emsp430x437.c: $(srcdir)/emulparams/msp430all.sh \
-   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-   ${GEN_DEPENDS}
- 	${GENSCRIPTS} msp430x437 "$(tdir_msp430x437)" msp430all
++	${GENSCRIPTS} msp430x435 "$(tdir_msp430x435)" msp430all
 +emsp430x4351.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x4351 "$(tdir_msp430x4351)" msp430all
++emsp430x436.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x436 "$(tdir_msp430x436)" msp430all
 +emsp430x4361.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x4361 "$(tdir_msp430x4361)" msp430all
++emsp430x437.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x437 "$(tdir_msp430x437)" msp430all
 +emsp430x4371.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x4371 "$(tdir_msp430x4371)" msp430all
- emsp430x447.c: $(srcdir)/emulparams/msp430all.sh \
-   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-   ${GEN_DEPENDS}
-@@ -3095,6 +3561,242 @@ emsp430x449.c: $(srcdir)/emulparams/msp430all.sh \
-   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-   ${GEN_DEPENDS}
- 	${GENSCRIPTS} msp430x449 "$(tdir_msp430x449)" msp430all
-+emsp430xG4616.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430x447.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4616 "$(tdir_msp430xG4616)" msp430all
-+emsp430xG4617.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430x447 "$(tdir_msp430x447)" msp430all
++emsp430x448.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4617 "$(tdir_msp430xG4617)" msp430all
-+emsp430xG4618.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430x448 "$(tdir_msp430x448)" msp430all
++emsp430x449.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4618 "$(tdir_msp430xG4618)" msp430all
-+emsp430xG4619.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430x449 "$(tdir_msp430x449)" msp430all
++emsp430x47163.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430xG4619 "$(tdir_msp430xG4619)" msp430all
++	${GENSCRIPTS} msp430x47163 "$(tdir_msp430x47163)" msp430all
++emsp430x47166.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47166 "$(tdir_msp430x47166)" msp430all
++emsp430x47167.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47167 "$(tdir_msp430x47167)" msp430all
++emsp430x47173.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47173 "$(tdir_msp430x47173)" msp430all
++emsp430x47176.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47176 "$(tdir_msp430x47176)" msp430all
++emsp430x47177.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47177 "$(tdir_msp430x47177)" msp430all
++emsp430x47183.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47183 "$(tdir_msp430x47183)" msp430all
++emsp430x47186.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47186 "$(tdir_msp430x47186)" msp430all
++emsp430x47187.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47187 "$(tdir_msp430x47187)" msp430all
++emsp430x47193.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47193 "$(tdir_msp430x47193)" msp430all
++emsp430x47196.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47196 "$(tdir_msp430x47196)" msp430all
++emsp430x47197.c: $(srcdir)/emulparams/msp430all.sh \
++  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
++  ${GEN_DEPENDS}
++	${GENSCRIPTS} msp430x47197 "$(tdir_msp430x47197)" msp430all
 +emsp430x4783.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -4686,54 +5440,6 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x4794 "$(tdir_msp430x4794)" msp430all
-+emsp430x47163.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47163 "$(tdir_msp430x47163)" msp430all
-+emsp430x47173.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47173 "$(tdir_msp430x47173)" msp430all
-+emsp430x47183.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47183 "$(tdir_msp430x47183)" msp430all
-+emsp430x47193.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47193 "$(tdir_msp430x47193)" msp430all
-+emsp430x47166.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47166 "$(tdir_msp430x47166)" msp430all
-+emsp430x47176.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47176 "$(tdir_msp430x47176)" msp430all
-+emsp430x47186.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47186 "$(tdir_msp430x47186)" msp430all
-+emsp430x47196.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47196 "$(tdir_msp430x47196)" msp430all
-+emsp430x47167.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47167 "$(tdir_msp430x47167)" msp430all
-+emsp430x47177.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47177 "$(tdir_msp430x47177)" msp430all
-+emsp430x47187.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47187 "$(tdir_msp430x47187)" msp430all
-+emsp430x47197.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} msp430x47197 "$(tdir_msp430x47197)" msp430all
 +emsp430x5418.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
@@ -4858,41 +5564,112 @@
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
 +	${GENSCRIPTS} msp430x6638 "$(tdir_msp430x6638)" msp430all
-+ecc430x5133.c: $(srcdir)/emulparams/msp430all.sh \
+ emsp430xE423.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430xE423 "$(tdir_msp430xE423)" msp430all
++emsp430xE4232.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x5133 "$(tdir_cc430x5133)" msp430all
-+ecc430x5125.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xE4232 "$(tdir_msp430xE4232)" msp430all
++emsp430xE4242.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x5125 "$(tdir_cc430x5125)" msp430all
-+ecc430x6125.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xE4242 "$(tdir_msp430xE4242)" msp430all
+ emsp430xE425.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430xE425 "$(tdir_msp430xE425)" msp430all
++emsp430xE4252.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x6125 "$(tdir_cc430x6125)" msp430all
-+ecc430x6135.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xE4252 "$(tdir_msp430xE4252)" msp430all
+ emsp430xE427.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430xE427 "$(tdir_msp430xE427)" msp430all
+-emsp430xW423.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430xE4272.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430xW423 "$(tdir_msp430xW423)" msp430all
+-emsp430xW425.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xE4272 "$(tdir_msp430xE4272)" msp430all
++emsp430xG4250.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430xW425 "$(tdir_msp430xW425)" msp430all
+-emsp430xW427.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4250 "$(tdir_msp430xG4250)" msp430all
++emsp430xG4250.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430xW427 "$(tdir_msp430xW427)" msp430all
++	${GENSCRIPTS} msp430xG4250 "$(tdir_msp430xG4250)" msp430all
++emsp430xG4260.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x6135 "$(tdir_cc430x6135)" msp430all
-+ecc430x6126.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4260 "$(tdir_msp430xG4260)" msp430all
++emsp430xG4270.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x6126 "$(tdir_cc430x6126)" msp430all
-+ecc430x5137.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4270 "$(tdir_msp430xG4270)" msp430all
++emsp430xG4270.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x5137 "$(tdir_cc430x5137)" msp430all
-+ecc430x6127.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4270 "$(tdir_msp430xG4270)" msp430all
+ emsp430xG437.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+@@ -3071,30 +3809,34 @@ emsp430xG439.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+ 	${GENSCRIPTS} msp430xG439 "$(tdir_msp430xG439)" msp430all
+-emsp430x435.c: $(srcdir)/emulparams/msp430all.sh \
++emsp430xG4616.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x435 "$(tdir_msp430x435)" msp430all
+-emsp430x436.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4616 "$(tdir_msp430xG4616)" msp430all
++emsp430xG4617.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x436 "$(tdir_msp430x436)" msp430all
+-emsp430x437.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4617 "$(tdir_msp430xG4617)" msp430all
++emsp430xG4618.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x437 "$(tdir_msp430x437)" msp430all
+-emsp430x447.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4618 "$(tdir_msp430xG4618)" msp430all
++emsp430xG4619.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x447 "$(tdir_msp430x447)" msp430all
+-emsp430x448.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xG4619 "$(tdir_msp430xG4619)" msp430all
++emsp430xW423.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x448 "$(tdir_msp430x448)" msp430all
+-emsp430x449.c: $(srcdir)/emulparams/msp430all.sh \
++	${GENSCRIPTS} msp430xW423 "$(tdir_msp430xW423)" msp430all
++emsp430xW425.c: $(srcdir)/emulparams/msp430all.sh \
+   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
+   ${GEN_DEPENDS}
+-	${GENSCRIPTS} msp430x449 "$(tdir_msp430x449)" msp430all
++	${GENSCRIPTS} msp430xW425 "$(tdir_msp430xW425)" msp430all
++emsp430xW427.c: $(srcdir)/emulparams/msp430all.sh \
 +  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
 +  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x6127 "$(tdir_cc430x6127)" msp430all
-+ecc430x6137.c: $(srcdir)/emulparams/msp430all.sh \
-+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf32msp430.sc \
-+  ${GEN_DEPENDS}
-+	${GENSCRIPTS} cc430x6137 "$(tdir_cc430x6137)" msp430all
++	${GENSCRIPTS} msp430xW427 "$(tdir_msp430xW427)" msp430all
  enews.c: $(srcdir)/emulparams/news.sh \
    $(srcdir)/emultempl/generic.em $(srcdir)/scripttempl/aout.sc ${GEN_DEPENDS}
  	${GENSCRIPTS} news "$(tdir_news)"
+diff --git binutils-2.21.orig/ld/configure.tgt binutils-2.21/ld/configure.tgt
+index 4e90739..86e717b 100644
 --- binutils-2.21.orig/ld/configure.tgt
 +++ binutils-2.21/ld/configure.tgt
 @@ -426,7 +426,7 @@ mn10300-*-*)		targ_emul=mn10300
@@ -4900,10 +5677,12 @@
  			;;
  msp430-*-*)             targ_emul=msp430x110
 -                        targ_extra_emuls="msp430x112 msp430x1101 msp430x1111 msp430x1121 msp430x1122 msp430x1132 msp430x122 msp430x123 msp430x1222 msp430x1232 msp430x133 msp430x135 msp430x1331 msp430x1351 msp430x147 msp430x148 msp430x149 msp430x155 msp430x156 msp430x157 msp430x167 msp430x168 msp430x169 msp430x1610 msp430x1611 msp430x1612 msp430x2101 msp430x2111 msp430x2121 msp430x2131 msp430x311 msp430x312 msp430x313 msp430x314 msp430x315 msp430x323 msp430x325 msp430x336 msp430x337 msp430x412 msp430x413 msp430x415 msp430x417 msp430xE423 msp430xE425 msp430xE427 msp430xW423 msp430xW425 msp430xW427 msp430xG437 msp430xG438 msp430xG439 msp430x435 msp430x436 msp430x437 msp430x447 msp430x448 msp430x449"
-+                        targ_extra_emuls="msp430x112 msp430x1101 msp430x1111 msp430x1121 msp430x1122 msp430x1132 msp430x122 msp430x123 msp430x1222 msp430x1232 msp430x133 msp430x135 msp430x1331 msp430x1351 msp430x147 msp430x148 msp430x149 msp430x1471 msp430x1481 msp430x1491 msp430x155 msp430x156 msp430x157 msp430x167 msp430x168 msp430x169 msp430x1610 msp430x1611 msp430x1612 msp430x2001 msp430x2011 msp430x2002 msp430x2012 msp430x2003 msp430x2013 msp430x2101 msp430x2111 msp430x2112 msp430x2121 msp430x2122 msp430x2131 msp430x2132 msp430x2101 msp430x2211 msp430x2221 msp430x2231 msp430x2232 msp430x2232 msp430x2234 msp430x2252 msp430x2254 msp430x2272 msp430x2274 msp430x233 msp430x235 msp430x2330 msp430x2350 msp430x2370 msp430x247 msp430x248 msp430x249 msp430x2410 msp430x2471 msp430x2481 msp430x2491 msp430x2416 msp430x2417 msp430x2418 msp430x2419 msp430x2616 msp430x2617 msp430x2618 msp430x2619 msp430x311 msp430x312 msp430x313 msp430x314 msp430x315 msp430x323 msp430x325 msp430x336 msp430x337 msp430x412 msp430x413 msp430x415 msp430x417 msp430x423 msp430x425 msp430x427 msp430x4250 msp430x4260 msp430x4270 msp430xE423 msp430xE425 msp430xE427 msp430xE4232 msp430xE4242 msp430xE4252 msp430xE4272 msp430xW423 msp430xW425 msp430xW427 msp430xG4250 msp430xG4260 msp430xG4270 msp430xG437 msp430xG438 msp430xG439 msp430x435 msp430x436 msp430x437 msp430x4351 msp430x4361 msp430x4371 msp430x447 msp430x448 msp430x449 msp430xG4616 msp430xG4617 msp430xG4618 msp430xG4619 msp430x4783 msp430x4784 msp430x4793 msp430x4794 msp430x47163 msp430x47173 msp430x47183 msp430x47193 msp430x47166 msp430x47176 msp430x47186 msp430x47196 msp430x47167 msp430x47177 msp430x47187 msp430x47197 msp430x5418 msp430x5419 msp430x5435 msp430x5436 msp430x5437 msp430x5438 msp430x5500 msp430x5501 msp430x5502 msp430x5503 msp430x5504 msp430x5505 msp430x5506 msp430x5507 msp430x5508 msp430x5509 msp430x5510 msp430x5513 msp430x5514 msp430x5515 msp430x5517 msp430x5519 msp430x5521 msp430x5522 msp430x5524 msp430x5525 msp430x5526 msp430x5527 msp430x5528 msp430x5529 msp430x6638 cc430x5133 cc430x5125 cc430x6125 cc430x6135 cc430x6126 cc430x5137 cc430x6127 cc430x6137"
++                        targ_extra_emuls="cc430x5125 cc430x5133 cc430x5137 cc430x6125 cc430x6126 cc430x6127 cc430x6135 cc430x6137 msp430x110 msp430x1101 msp430x1111 msp430x112 msp430x1121 msp430x1122 msp430x1132 msp430x122 msp430x1222 msp430x123 msp430x1232 msp430x133 msp430x1331 msp430x135 msp430x1351 msp430x147 msp430x1471 msp430x148 msp430x1481 msp430x149 msp430x1491 msp430x155 msp430x156 msp430x157 msp430x1610 msp430x1611 msp430x1612 msp430x167 msp430x168 msp430x169 msp430x2001 msp430x2002 msp430x2003 msp430x2011 msp430x2012 msp430x2013 msp430x2101 msp430x2111 msp430x2112 msp430x2121 msp430x2122 msp430x2131 msp430x2132 msp430x2201 msp430x2211 msp430x2221 msp430x2231 msp430x2232 msp430x2234 msp430x2252 msp430x2254 msp430x2272 msp430x2274 msp430x233 msp430x2330 msp430x235 msp430x2350 msp430x2370 msp430x2410 msp430x2416 msp430x2416 msp430x2417 msp430x2417 msp430x2418 msp430x2418 msp430x2419 msp430x2419 msp430x247 msp430x2471 msp430x248 msp430x2481 msp430x249 msp430x2491 msp430x2616 msp430x2617 msp430x2618 msp430x2619 msp430x311 msp430x312 msp430x313 msp430x314 msp430x315 msp430x323 msp430x325 msp430x336 msp430x337 msp430x412 msp430x413 msp430x415 msp430x417 msp430x423 msp430x425 msp430x4250 msp430x4250 msp430x4260 msp430x427 msp430x4270 msp430x4270 msp430x435 msp430x4351 msp430x436 msp430x4361 msp430x437 msp430x4371 msp430x447 msp430x448 msp430x449 msp430x47163 msp430x47166 msp430x47167 msp430x47173 msp430x47176 msp430x47177 msp430x47183 msp430x47186 msp430x47187 msp430x47193 msp430x47196 msp430x47197 msp430x4783 msp430x4784 msp430x4793 msp430x4794 msp430x5418 msp430x5419 msp430x5435 msp430x5436 msp430x5437 msp430x5438 msp430x5500 msp430x5501 msp430x5502 msp430x5503 msp430x5504 msp430x5505 msp430x5506 msp430x5507 msp430x5508 msp430x5509 msp430x5510 msp430x5513 msp430x5514 msp430x5515 msp430x5517 msp430x5519 msp430x5521 msp430x5522 msp430x5524 msp430x5525 msp430x5526 msp430x5527 msp430x5528 msp430x5529 msp430x6638 msp430xE423 msp430xE4232 msp430xE4242 msp430xE425 msp430xE4252 msp430xE427 msp430xE4272 msp430xG4250 msp430xG4250 msp430xG4260 msp430xG4270 msp430xG4270 msp430xG437 msp430xG438 msp430xG439 msp430xG4616 msp430xG4617 msp430xG4618 msp430xG4619 msp430xW423 msp430xW425 msp430xW427"
  			;;
  ns32k-pc532-mach* | ns32k-pc532-ux*)  targ_emul=pc532macha ;;
  ns32k-*-netbsd* | ns32k-pc532-lites*) targ_emul=ns32knbsd
+diff --git binutils-2.21.orig/ld/emulparams/msp430all.sh binutils-2.21/ld/emulparams/msp430all.sh
+index 57d21c2..cf54e74 100644
 --- binutils-2.21.orig/ld/emulparams/msp430all.sh
 +++ binutils-2.21/ld/emulparams/msp430all.sh
 @@ -18,7 +18,7 @@ ROM_START=0xfc00
@@ -5239,7 +6018,7 @@
 +ROM_SIZE=0x1fc0
 +RAM_START=0x0200
 +RAM_SIZE=512
-+VECTORS_START=0xffc0
++VECTORS_START=0xffe0
 +fi
 +
 +# Warning: Value-line chips, may not be correct for other models
@@ -5334,7 +6113,7 @@
 +ROM_SIZE=0x7fe0
 +RAM_START=0x1100
 +RAM_SIZE=4096
-+VECTORS_START=0xffe0
++VECTORS_START=0xffc0
 +fi
 +
 +if [ "${MSP430_NAME}" = "msp430x248" -o "${MSP430_NAME}" = "msp430x2481" ] ; then
@@ -5343,7 +6122,7 @@
 +ROM_SIZE=0xbfe0
 +RAM_START=0x1100
 +RAM_SIZE=4096
-+VECTORS_START=0xffe0
++VECTORS_START=0xffc0
 +fi
 +
 +if [ "${MSP430_NAME}" = "msp430x249" -o "${MSP430_NAME}" = "msp430x2491" ] ; then
@@ -5352,7 +6131,7 @@
 +ROM_SIZE=0xeee0
 +RAM_START=0x0200
 +RAM_SIZE=2048
-+VECTORS_START=0xffe0
++VECTORS_START=0xffc0
 +fi
 +
 +if [ "${MSP430_NAME}" = "msp430x2410" ] ; then
@@ -5361,7 +6140,7 @@
 +ROM_SIZE=0xdee0
 +RAM_START=0x1100
 +RAM_SIZE=4096
-+VECTORS_START=0xffe0
++VECTORS_START=0xffc0
 +fi
 +
 +if [ "${MSP430_NAME}" = "msp430x2416" -o "${MSP430_NAME}" = "msp430x2616" ] ; then
@@ -6314,6 +7093,8 @@
 +
 +STACK=$(printf "0x%x" $(( RAM_START + RAM_SIZE )) )
 +VECTORS_SIZE=$((0x10000 - VECTORS_START))
+diff --git binutils-2.21.orig/ld/scripttempl/elf32msp430.sc binutils-2.21/ld/scripttempl/elf32msp430.sc
+index 54c35be..27293e4 100644
 --- binutils-2.21.orig/ld/scripttempl/elf32msp430.sc
 +++ binutils-2.21/ld/scripttempl/elf32msp430.sc
 @@ -14,9 +14,32 @@ HEAP_SECTION_MSP430=".heap ${RELOCATING-0} :
@@ -6520,6 +7301,8 @@
    PROVIDE (__stack = ${STACK}) ;
    PROVIDE (__data_start_rom = _etext) ;
    PROVIDE (__data_end_rom   = _etext + SIZEOF (.data)) ;
+diff --git binutils-2.21.orig/ld/scripttempl/elf32msp430_3.sc binutils-2.21/ld/scripttempl/elf32msp430_3.sc
+index 1c44d93..bcc44f3 100644
 --- binutils-2.21.orig/ld/scripttempl/elf32msp430_3.sc
 +++ binutils-2.21/ld/scripttempl/elf32msp430_3.sc
 @@ -4,9 +4,9 @@ OUTPUT_ARCH(${ARCH})
@@ -6663,6 +7446,8 @@
      ${RELOCATING+ _vectors_end = . ; }
    } ${RELOCATING+ > vectors}
  
+diff --git binutils-2.21.orig/opcodes/msp430-dis.c binutils-2.21/opcodes/msp430-dis.c
+index 9d7edbe..69e9e4b 100644
 --- binutils-2.21.orig/opcodes/msp430-dis.c
 +++ binutils-2.21/opcodes/msp430-dis.c
 @@ -52,12 +52,153 @@ msp430dis_opcode (bfd_vma addr, disassemble_info *info)
