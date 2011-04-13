@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="3"
+EAPI="4"
 
 inherit eutils
 
@@ -27,12 +27,9 @@ IUSE=""
 RDEPEND=">=sys-apps/portage-2.1
 	app-shells/bash
 	!sys-devel/crossdev-wrappers"
-DEPEND="app-arch/xz-utils"
+DEPEND=""
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-msp430.patch
-}
-
-src_install() {
-	emake install DESTDIR="${D}" || die
+	epatch "${FILESDIR}"/${PN}-20101011-msp430.patch
+	epatch "${FILESDIR}"/${PN}-20101011-avr32.patch
 }
