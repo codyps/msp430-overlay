@@ -26,7 +26,7 @@ else
 fi
 
 PATCH_VER="1"
-DESCRIPTION="GNU debugger"
+DESCRIPTION="GNU debugger for MSP430"
 HOMEPAGE="http://sources.redhat.com/gdb/"
 if [[ -n ${RPM} ]] ; then
 	SRC_URI="http://mirrors.kernel.org/fedora/development/source/SRPMS/${RPM}"
@@ -56,10 +56,8 @@ S="${WORKDIR}/gdb-${PV}"
 
 src_prepare() {
 	[[ -n ${RPM} ]] && rpm_spec_epatch "${WORKDIR}"/gdb.spec
-	use vanilla || [[ -n ${PATCH_VER} ]] && EPATCH_SUFFIX="patch" epatch "${WORKDIR}"/patch
 	strip-linguas -u bfd/po opcodes/po
 
-	cp -r "${FILESDIR}"/msp430-gdb/* "${S}"
 	epatch "${FILESDIR}"/${P}.patch
 }
 
