@@ -10,6 +10,8 @@ inherit toolchain-binutils
 
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~sparc-fbsd ~x86-fbsd"
 
+unset ARCH
+
 src_prepare() {
 	epatch "${FILESDIR}"/${P}.patch
 }
