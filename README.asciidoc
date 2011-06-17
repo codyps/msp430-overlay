@@ -14,7 +14,8 @@ http://www.gentoo.org/proj/en/overlays/userguide.xml[overlay user guide]
 for more information on overlay management with layman.
 
 * Install sys-devel/crossdev from this overlay which includes support for
-generating msp430 and avr32 cross-compile toolchains. For recent versions of portage (2.2*) you can run
+generating msp430 and avr32 cross-compile toolchains. For >=portage-2.1.10 you
+can run
 +
 ..........................
  # emerge crossdev::msp430
