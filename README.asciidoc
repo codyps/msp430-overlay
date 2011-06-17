@@ -20,6 +20,16 @@ can run
 ..........................
  # emerge crossdev::msp430
 ..........................
++
+Otherwise the standard
++
+..........................
+ # emerge -av crossdev
+..........................
++
+should usually work, but be sure to confirm that portage is going to install
+crossdev from this overlay before continuing.
+
 
 Creating cross-compile toolchains on Gentoo
 -------------------------------------------
