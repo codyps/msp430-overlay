@@ -5,13 +5,13 @@
  
  		msp430)
 -		      STAGE_DEFAULT=${STAGE_BINUTILS};;
-+		      KPKG="[none]";
++		      KCAT="dev-embedded"; KPKG="msp430mcu";
 +		      BPKG="msp430-binutils";
 +		      GPKG="msp430-gcc";
 +		      LCAT="dev-embedded"; LPKG="msp430-libc";
 +		      DPKG="msp430-gdb";
 +		      IPKG="msp430-insight";
-+		      GUSE="-fortran -openmp" # doesn't work
++		      GUSE="-fortran -openmp";
 +		      WITH_DEF_HEADERS="no";;
  
  		nios2*)
