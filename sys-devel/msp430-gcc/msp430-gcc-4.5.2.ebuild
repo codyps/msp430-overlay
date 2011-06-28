@@ -2,9 +2,6 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-#PATCH_VER="1.1"
-#UCLIBC_VER="1.0"
-
 ETYPE="gcc-compiler"
 
 inherit toolchain
@@ -15,8 +12,7 @@ LICENSE="GPL-3 LGPL-3 || ( GPL-3 libgcc libstdc++ gcc-runtime-library-exception-
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd"
 IUSE=""
 
-RDEPEND="dev-embedded/msp430mcu
-	>=sys-libs/zlib-1.1.4
+RDEPEND=">=sys-libs/zlib-1.1.4
 	>=sys-devel/gcc-config-1.4
 	virtual/libiconv
 	>=dev-libs/gmp-4.3.2
