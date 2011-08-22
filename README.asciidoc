@@ -73,9 +73,9 @@ installed by msp430mcu in /usr/msp430/lib/ldscripts so you'll have to re-emerge
 msp430mcu every time msp430-binutils is updated. The main error you may see
 if this has occurred is the following:
 +
-.........................................................................
+.................................................................................................
 # /usr/libexec/gcc/msp430/ld: cannot open linker script file memory.x: No such file or directory
-------------------------------------------------------------------------
+.................................................................................................
 +
 Simply re-emerging msp430mcu should fix this problem.
 
