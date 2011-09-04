@@ -77,7 +77,10 @@ if this has occurred is the following:
 # /usr/libexec/gcc/msp430/ld: cannot open linker script file memory.x: No such file or directory
 .................................................................................................
 +
-Simply re-emerging msp430mcu should fix this problem.
+Simply re-emerging msp430mcu should fix this problem. It is also possible to
+edit the binutils-config script to fix the problem more permanently. See
+https://bugs.gentoo.org/show_bug.cgi?id=381633[Gentoo bug #381633] for more
+information.
 
 AVR32
 ~~~~~
