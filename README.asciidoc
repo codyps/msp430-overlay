@@ -69,7 +69,7 @@ where $CHOST is something like x86_64-pc-linux-gnu or i686-pc-linux-gnu for
 standard amd64 or x86 architectures running Gentoo.
 ////
 
-* WARNING: Currently installing msp430-binutils will delete the ldscripts
+* [red]*WARNING*: Currently installing msp430-binutils will delete the ldscripts
 installed by msp430mcu in /usr/msp430/lib/ldscripts so you'll have to re-emerge
 msp430mcu every time msp430-binutils is updated. The main error you may see
 if this has occurred is the following:
