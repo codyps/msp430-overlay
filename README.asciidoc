@@ -79,7 +79,7 @@ if this has occurred is the following:
 +
 Simply re-emerging msp430mcu should fix this problem. It is also possible to
 edit the binutils-config script to fix the problem more permanently. See
-https://bugs.gentoo.org/show_bug.cgi?id=381633[Gentoo bug #381633] for more
+https://bugs.gentoo.org/show_bug.cgi?id=381633[bug #381633] for more
 information.
 
 AVR32
