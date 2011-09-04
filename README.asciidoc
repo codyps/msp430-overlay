@@ -54,7 +54,7 @@ following command:
  # crossdev --help
 ...................
 
-//// # Shouldn't be necessary anymore
+////
 * Once crossdev successfully creates a toolchain you should symlink the
 ldscripts folder into a place where the linker will find it. If you don't do
 this you may run into problems discussed in
