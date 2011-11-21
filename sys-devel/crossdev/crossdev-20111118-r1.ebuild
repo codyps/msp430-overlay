@@ -27,9 +27,9 @@ IUSE=""
 RDEPEND=">=sys-apps/portage-2.1
 	app-shells/bash
 	!sys-devel/crossdev-wrappers"
-DEPEND=""
+DEPEND="app-arch/xz-utils"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-20110310-msp430.patch \
+	epatch "${FILESDIR}"/${P}-msp430.patch \
 		"${FILESDIR}"/${PN}-20101011-avr32.patch
 }

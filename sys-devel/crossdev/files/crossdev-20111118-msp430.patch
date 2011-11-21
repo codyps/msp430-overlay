@@ -1,6 +1,6 @@
---- crossdev-20110819/crossdev.orig
-+++ crossdev-20110819/crossdev
-@@ -37,7 +37,7 @@
+--- crossdev-20111118/crossdev.orig
++++ crossdev-20111118/crossdev
+@@ -38,7 +38,7 @@
      ${GOOD}--k, --kernel${NORMAL} ver        Specify version of kernel headers to use
      ${GOOD}--l, --libc${NORMAL} ver          Specify version of libc to use
      ${GOOD}-A, --abis${NORMAL} abis          Specify ABIs to build, first one is the default
@@ -9,7 +9,7 @@
      ${GOOD}-f, --force${NORMAL}              I don't need a seat belt!
      ${GOOD}-S, --stable${NORMAL}             Use latest stable versions as default
      ${GOOD}-C, --clean${NORMAL} target       Uninstall specified target
-@@ -51,7 +51,9 @@
+@@ -52,7 +52,9 @@
      ${GOOD}-oO, --ov-output${NORMAL} path    Overlay to write crossdev package links
                                  [default: last from --overlays list]
      ${GOOD}-ob, --ov-binutils${NORMAL} path  Overlay for binutils ebuilds [default: search]
@@ -19,7 +19,7 @@
      ${GOOD}-ok, --ov-kernel${NORMAL} path    Overlay for kernel ebuilds [default: search]
      ${GOOD}-ol, --ov-libc${NORMAL} path      Overlay for C library ebuilds [default: search]
  
-@@ -189,7 +191,14 @@
+@@ -190,7 +192,14 @@
  		      LCAT="dev-util"; LPKG="mingw-runtime";;
  
  		msp430)
@@ -35,7 +35,7 @@
  
  		nios2*)
  		      BPKG="binutils-nios2";
-@@ -444,6 +453,8 @@
+@@ -446,6 +455,8 @@
  GCAT="sys-devel"  ; GPKG="gcc"           ; GVER="" GUSE="" GENV="" GOVL=""
  KCAT="sys-kernel" ; KPKG="linux-headers" ; KVER="" KUSE="" KENV="" KOVL=""
  LCAT="sys-libs"   ; LPKG="[none]"        ; LVER="" LUSE="" LENV="" LOVL=""
@@ -44,7 +44,7 @@
  DEFAULT_VER="[latest]"
  SEARCH_OVERLAYS=""
  CROSSDEV_OVERLAY=""
-@@ -467,9 +478,15 @@
+@@ -469,9 +480,15 @@
  	--b|--binutils)    shift; BVER=$1;;
  	--benv)            shift; BENV=$1;;
  	-ob|--ov-binutils) shift; BOVL=$1;;
@@ -60,7 +60,7 @@
  	--k|--kernel)      shift; KVER=$1;;
  	--kenv)            shift; KENV=$1;;
  	-ok|--ov-kernel)   shift; KOVL=$1;;
-@@ -733,8 +750,8 @@
+@@ -811,8 +828,8 @@
  set_portage ${GCAT} ${GPKG} ${GVER} "${GENV}" "${GOVL}"
  set_portage ${KCAT} ${KPKG} ${KVER} "${KENV}" "${KOVL}"
  set_portage ${LCAT} ${LPKG} ${LVER} "${LENV}" "${LOVL}"
@@ -68,10 +68,10 @@
 -set_portage dev-util insight
 +set_portage ${DCAT} ${DPKG} ${DVER} "${DENV}" "${DOVL}"
 +set_portage ${ICAT} ${IPKG} ${IVER} "${IENV}" "${IOVL}"
+ set_metadata
  
  # filter out revdep rebuild stuff #182601
- mkdir -p /etc/revdep-rebuild
-@@ -845,7 +862,7 @@
+@@ -924,7 +941,7 @@
  
  EOPTS="${EOPTS_UP} --newuse"
  ex_gcc && USE="${GUSE} ${USE}" doemerge ${GPKG} ${GPKG}-extra
