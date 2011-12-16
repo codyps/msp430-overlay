@@ -4,6 +4,8 @@
 
 EAPI="2"
 
+PATCHVER="1.2"
+ELF2FLT_VER=""
 inherit toolchain-binutils
 
 MY_PV="${PV%_p*}"
