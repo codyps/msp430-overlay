@@ -40,7 +40,7 @@
  KCAT="sys-kernel" ; KPKG="linux-headers" ; KVER="" KUSE="" KENV="" KOVL=""
  LCAT="sys-libs"   ; LPKG="[none]"        ; LVER="" LUSE="" LENV="" LOVL=""
 +DCAT="sys-devel"  ; DPKG="gdb"           ; DVER="" DUSE="" DENV="" DOVL=""
-+ICAT="dev-util"   ; DPKG="insight"       ; IVER="" IUSE="" IENV="" IOVL=""
++ICAT="dev-util"   ; IPKG="insight"       ; IVER="" IUSE="" IENV="" IOVL=""
  DEFAULT_VER="[latest]"
  SEARCH_OVERLAYS=""
  CROSSDEV_OVERLAY=""
