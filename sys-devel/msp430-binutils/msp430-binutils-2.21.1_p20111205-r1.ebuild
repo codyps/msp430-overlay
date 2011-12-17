@@ -9,7 +9,8 @@ ELF2FLT_VER=""
 inherit toolchain-binutils
 
 MY_PV="${PV%_p*}"
-SRC_URI="mirror://gnu/binutils/binutils-${MY_PV}.tar.bz2"
+SRC_URI="mirror://gnu/binutils/binutils-${MY_PV}.tar.bz2
+	mirror://gentoo/binutils-${MY_PV}-patches-${PATCHVER}.tar.bz2"
 KEYWORDS="~amd64 ~x86"
 
 S="${WORKDIR}/binutils-${MY_PV}"

@@ -5,6 +5,8 @@
 PATCH_VER="1.0"
 BRANCH_UPDATE=""
 
+ETYPE="gcc-compiler"
+
 inherit toolchain
 
 DESCRIPTION="The GNU Compiler Collection for MSP430"
