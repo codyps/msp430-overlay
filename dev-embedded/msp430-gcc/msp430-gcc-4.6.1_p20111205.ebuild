@@ -6,6 +6,7 @@ EAPI="4"
 
 PATCH_VER="1.0"
 BRANCH_UPDATE=""
+ETYPE="gcc-compiler" # For funtoo toolchain eclass.
 
 inherit toolchain
 
